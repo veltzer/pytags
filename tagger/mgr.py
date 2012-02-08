@@ -122,12 +122,11 @@ class Mgr:
 		curname='/'
 		for comp in directory.split('/')[1:]:
 			id=self.find_id_in_folder(id,comp,curname)
+			curname=comp
 		self.disconnect()
 	def taglist(self):
 		self.connect()
-		query="""
-			SELECT f_name from TbTag
-		"""
+		query="""SELECT f_name from TbTag"""
 		cursor=self.conn.cursor()
 		cursor.execute(query)
 		while True:

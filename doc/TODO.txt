@@ -1,1 +1,2 @@
-- add the create target.
+- when ever there is an error and I throw an exception I see lots of junk on
+	the screen. How do I do a cleaner exception handling thingy?

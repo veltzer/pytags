@@ -1,4 +1,5 @@
 should there be relations between tags?
+=======================================
 Interesting question. There should be.
 A tag may imply another tag (sub tag).
 For instance: a tag of "orange" is a sub tag of "fruit".
@@ -8,3 +9,15 @@ For instance: a tag of "orange" is a sub tag of "fruit".
 	So any tag may be a subtag of any number of tags.
 Tagger should know how to read realtionships between tags and import them
 into the database.
+
+How should files be stored in the tagger database?
+==================================================
+I thought about putting the inode numbers in the database.
+advantages:
+- a file could be searched for very quickly without going to it from the root.
+disadvantages:
+- what about multiple file systems?
+- what about moving files around so that their name remains the same but their inode changes.
+	This actually happens to a lot of files when you change your hard drive.
+resolution:
+store file names as names and not as inodes.
