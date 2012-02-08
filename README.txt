@@ -26,16 +26,16 @@ tagger --scan
 	configuration determines which files are actually scanned (you probably don't want to scan
 	some files, like binary files).
 	Files which have already been scanned are not scanned.
-
-future:
 tagger --search [tags]
 	will list the set of files that have been tagged with these tags that are in the requested folder.
 	The default for the folder is the current folder.
+tagger --taglist
+	list all tags known to tagger and their relationships.
+
+future:
 tagger --importrelations [file]
 	will import relationships file between tags.
 	tags which are mentioned in this file will have their previous relationships erased.
-tagger --taglist
-	will list all tags known to tagger and their relationships.
 tagger --clean
 	will clear the tagger database.
 	must pass --force to show that you really want this.

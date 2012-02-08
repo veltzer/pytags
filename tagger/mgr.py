@@ -1,6 +1,7 @@
 import tagger.config
 import MySQLdb
 import warnings
+import os
 
 class Mgr:
 	def __init__(self):
@@ -19,6 +20,12 @@ class Mgr:
 			warnings.filterwarnings('ignore', category = MySQLdb.Warning)
 	def disconnect(self):
 		self.conn.close()
+	def get_row(self,query):
+		cursor=self.conn.cursor()
+		cursor.execute(query)
+		row=cursor.fetchone()
+		cursor.close()
+		return row
 	def execute(self,stmt):
 		"""
 		Run the given query, commit changes
@@ -28,6 +35,18 @@ class Mgr:
 		cursor.close()
 		self.conn.commit()
 		return num_affected_rows
+	def error(self,msg):
+		raise ValueError(msg)
+	# find the id of a file named name in folder with db id id
+	def find_id_in_folder(self,id,name,curname):
+		query="""
+			SELECT f_id from TbFile WHERE f_name="%s" AND f_parent=%d
+		""" % (name,id)
+		row=self.get_row(query)
+		if row is None:
+			raise ValueError('cannot find folder '+name+' in '+curname)
+		else:
+			return row['f_id']
 	""" ops that can be launched from the command line """
 	def showconfig(self):
 		tagger.config.show()
@@ -65,7 +84,7 @@ class Mgr:
 				f_id INT NOT NULL AUTO_INCREMENT,
 				f_name VARCHAR(256) NOT NULL,
 				f_mtime DATETIME NOT NULL,
-				f_parent INT,
+				f_parent INT NOT NULL,
 				PRIMARY KEY(f_id),
 				UNIQUE KEY f_name_id (f_id,f_name),
 				KEY f_parent (f_parent),
@@ -82,6 +101,38 @@ class Mgr:
 				CONSTRAINT FOREIGN KEY(f_tag) REFERENCES TbTag(f_id)
 			) ENGINE=InnoDB
 		""")
+		self.execute("""
+			INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)
+			""" % ('/',os.path.getmtime('/'),1)
+		)
 		self.disconnect()
 	def scan(self):
 		directory=tagger.config.ns_mgr.p_dir
+		# now add the directory if it's not there...
+	def search(self):
+		self.connect()
+		directory=tagger.config.ns_mgr.p_dir
+		if not os.path.isdir(directory):
+			self.error(directory+' is not a directory')
+		# turn the folder into absolute path
+		directory=os.path.abspath(directory)
+		#print directory
+		# id of the root
+		id=1
+		curname='/'
+		for comp in directory.split('/')[1:]:
+			id=self.find_id_in_folder(id,comp,curname)
+		self.disconnect()
+	def taglist(self):
+		self.connect()
+		query="""
+			SELECT f_name from TbTag
+		"""
+		cursor=self.conn.cursor()
+		cursor.execute(query)
+		while True:
+			row=cursor.fetchone()
+			if row is None:
+				break
+			print row[0]
+		self.disconnect()

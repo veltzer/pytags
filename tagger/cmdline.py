@@ -33,6 +33,18 @@ def parse(mgr):
 			action='store_true',
 			default=False,
 	)
+	parser.add_argument(
+			'--search',
+			help='search for a tag or tags in a folder',
+			action='store_true',
+			default=False,
+	)
+	parser.add_argument(
+			'--taglist',
+			help='list all tags know to tagger',
+			action='store_true',
+			default=False,
+	)
 	# variables overrides
 	parser.add_argument(
 			'--force',
@@ -55,8 +67,10 @@ def parse(mgr):
 		options.testconnect,
 		options.create,
 		options.scan,
+		options.search,
+		options.taglist,
 	])!=1:
-		parser.error('must specify one of showconfig,testconnect,create,scan')
+		parser.error('must specify one of showconfig,testconnect,create,scan,search,taglist')
 	# pass flags
 	tagger.config.ns_op.p_force=options.force
 	tagger.config.ns_mgr.p_dir=options.dir
@@ -69,3 +83,7 @@ def parse(mgr):
 		mgr.create()
 	if options.scan:
 		mgr.scan()
+	if options.search:
+		mgr.search()
+	if options.taglist:
+		mgr.taglist()
