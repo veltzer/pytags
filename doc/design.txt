@@ -1,0 +1,10 @@
+should there be relations between tags?
+Interesting question. There should be.
+A tag may imply another tag (sub tag).
+For instance: a tag of "orange" is a sub tag of "fruit".
+	This means that if I search for fruit I will also find
+	all tagged as orange.
+	"orange" may also be "somethingyellow"
+	So any tag may be a subtag of any number of tags.
+Tagger should know how to read realtionships between tags and import them
+into the database.

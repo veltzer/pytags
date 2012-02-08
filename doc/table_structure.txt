@@ -1,0 +1,23 @@
+When designing the table structure for tagger remmember the following:
+- tagger may need to handle a great many files.
+- tagger may need to handle a great many tags.
+
+
+Tables:
+
+Tag: tag information
+	id
+	tag name
+	tag description
+	tag popularity (how many files are using this tag - this is statistics and is redundant info)
+TagRelations: subtag information
+	parent tag id
+	child tag id
+Files: file information
+	id
+	file name
+	file modification date
+	file parent id (null if this is the root /).
+FilesTags: maps files to tags
+	file id
+	tag id
