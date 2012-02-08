@@ -2,7 +2,7 @@ tagger is a command line tool for tagging files efficiently.
 tagger keeps all tags known to it in a central database built
 	on top of mysql/sqlite and can search it.
 tagger is written in python.
-tagger does not rescan files which have been scanned before (unless passed a -force flag)
+tagger does not rescan files which have been scanned before (unless passed a --force flag)
 	for this reason tagger keeps a last modified time in its database.
 in the future tagger will scan also for filesystem extended attributes as tags.
 	so users will be able to tag binary files too or will be able to tag
@@ -28,11 +28,14 @@ tagger --update [--dir [dir]]
 	configuratin determines which files are actually scanned (you probably don't want to scan
 	binary files).
 	Files which have already been scanned are not scanned.
+tagger --importrelations [file]
+	will import relationships file between tags.
+	tags which are mentioned in this file will have their previous relationships erased.
 tagger --search [--dir [dir]] [tags]
 	will list the set of files that have been tagged with these tags that are in the requested folder.
 	The default for the folder is the current folder.
 tagger --taglist
-	will list all tags known to tagger.
+	will list all tags known to tagger and their relationships.
 tagger --clean
 	will clear the tagger database.
 	must pass --force to show that you really want this.
