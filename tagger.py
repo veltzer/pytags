@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
 import tagger.cmdline
+import tagger.mgr
 
-tagger.cmdline.parse()
+mgr=tagger.mgr.Mgr()
+tagger.cmdline.parse(mgr)

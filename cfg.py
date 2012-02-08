@@ -12,4 +12,7 @@ class ns_product:
 class ns_db:
 	p_name='tagger'
 	p_user='mark'
-	p_password='';
+	p_password=''
+	p_host='localhost'
+	p_port=3306
+	p_type='mysql'
