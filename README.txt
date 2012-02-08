@@ -1,6 +1,6 @@
 tagger is a command line tool for tagging files efficiently.
-tagger keeps all tags known to it in a central database build
-	on top of sqlite and it can search it.
+tagger keeps all tags known to it in a central database built
+	on top of mysql/sqlite and it can search it.
 tagger is written in python.
 tagger does not rescan files which have been scanned before (unless passed a -force flag)
 	for this reason tagger keeps a last modified time in its database.
