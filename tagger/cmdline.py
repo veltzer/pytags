@@ -32,10 +32,10 @@ def parse(mgr):
 		sys.exit(1)
 	if sum([
 		options.showconfig,
-		options.create,
 		options.testconnect,
+		options.create,
 	])!=1:
-		parser.error('must specify one of clean,build,printgraph,dotgraph,showops,showconfig,runop')
+		parser.error('must specify one of showconfig,testconnect,create')
 	if options.showconfig:
 		mgr.showconfig()
 	if options.testconnect:
