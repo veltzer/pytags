@@ -15,6 +15,12 @@ def parse(mgr):
 			default=False,
 	)
 	parser.add_argument(
+			'--testconnect',
+			help='test the connection to the database',
+			action='store_true',
+			default=False,
+	)
+	parser.add_argument(
 			'--create',
 			help='create the database',
 			action='store_true',
@@ -27,9 +33,12 @@ def parse(mgr):
 	if sum([
 		options.showconfig,
 		options.create,
+		options.testconnect,
 	])!=1:
 		parser.error('must specify one of clean,build,printgraph,dotgraph,showops,showconfig,runop')
 	if options.showconfig:
 		mgr.showconfig()
+	if options.testconnect:
+		mgr.testconnect()
 	if options.create:
 		mgr.create()

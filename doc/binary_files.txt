@@ -1,0 +1,12 @@
+This is my thoughts on binary files...
+
+How can binary files be tagged?
+
+If a binary file was created using a C file then I can supply a C snipplet that puts some
+meta data inside the binary file in a special section that will enable tagger to get at
+the tags.
+
+If the file was created from a file which was tagged then the binary file can be tagged
+with the same tags as the file which create the binary files. This requires that tagger
+know about the relationship between the two files. This maybe means that tagger should
+be integrated with pdmt. Think about this some more...

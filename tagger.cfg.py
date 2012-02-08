@@ -10,9 +10,8 @@ class ns_product:
 	p_version=tagger.utils.boot.system_check_output(['git','describe']).rstrip()
 	p_description='Project Dependency Management Tool'
 class ns_db:
-	p_name='tagger'
-	p_user='mark'
-	p_password=''
 	p_host='localhost'
 	p_port=3306
-	p_type='mysql'
+	p_user='[YOUR USER]'
+	p_password='[YOUR PASSWORD]'
+	p_db='tagger'

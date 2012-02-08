@@ -2,8 +2,8 @@ from __future__ import print_function
 import imp
 import os
 
-imp.load_source('tagger.config','cfg.py')
-overridefiles=os.path.expanduser('~/.cfg.py')
+imp.load_source('tagger.config','tagger.cfg.py')
+overridefiles=os.path.expanduser('~/.tagger.cfg.py')
 if os.path.isfile(overridefiles):
 	imp.load_source('tagger.config',overridefiles)
 
