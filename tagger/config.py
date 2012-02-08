@@ -13,4 +13,5 @@ def show():
 			print(ns_name)
 			ns=tagger.config.__dict__[ns_name]
 			for p in ns.__dict__:
-				print('\t',p,ns.__dict__[p])
+				if p.startswith('p_'):
+					print('\t',p,ns.__dict__[p])
