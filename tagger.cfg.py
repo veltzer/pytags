@@ -15,3 +15,7 @@ class ns_db:
 	p_user='[YOUR USER]'
 	p_password='[YOUR PASSWORD]'
 	p_db='tagger'
+class ns_op:
+	p_force=False
+class ns_mgr:
+	p_suppress_warnings=True

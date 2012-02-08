@@ -26,6 +26,12 @@ def parse(mgr):
 			action='store_true',
 			default=False,
 	)
+	parser.add_argument(
+			'--force',
+			help='force doing things',
+			action='store_true',
+			default=False,
+	)
 	options=parser.parse_args()
 	if debug:
 		print(options)
@@ -36,6 +42,9 @@ def parse(mgr):
 		options.create,
 	])!=1:
 		parser.error('must specify one of showconfig,testconnect,create')
+	# pass the force flag
+	tagger.config.ns_op.p_force=options.force
+	# run the ops...
 	if options.showconfig:
 		mgr.showconfig()
 	if options.testconnect:
