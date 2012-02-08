@@ -8,6 +8,7 @@ import tagger.config
 def parse(mgr):
 	debug=False
 	parser=argparse.ArgumentParser(description=tagger.config.ns_product.p_description)
+	# major ops
 	parser.add_argument(
 			'--showconfig',
 			help='show the config (after processing)',
@@ -16,21 +17,34 @@ def parse(mgr):
 	)
 	parser.add_argument(
 			'--testconnect',
-			help='test the connection to the database',
+			help='test the connection to the database (no errors is good)',
 			action='store_true',
 			default=False,
 	)
 	parser.add_argument(
 			'--create',
-			help='create the database',
+			help='create the database (use --force to remove old)',
 			action='store_true',
 			default=False,
 	)
+	parser.add_argument(
+			'--scan',
+			help='scan a folder recursivly (--dir to override folder)',
+			action='store_true',
+			default=False,
+	)
+	# variables overrides
 	parser.add_argument(
 			'--force',
 			help='force doing things',
 			action='store_true',
 			default=False,
+	)
+	parser.add_argument(
+			'--dir',
+			help='directory to scan',
+			action='store',
+			default='.',
 	)
 	options=parser.parse_args()
 	if debug:
@@ -40,10 +54,12 @@ def parse(mgr):
 		options.showconfig,
 		options.testconnect,
 		options.create,
+		options.scan,
 	])!=1:
-		parser.error('must specify one of showconfig,testconnect,create')
-	# pass the force flag
+		parser.error('must specify one of showconfig,testconnect,create,scan')
+	# pass flags
 	tagger.config.ns_op.p_force=options.force
+	tagger.config.ns_mgr.p_dir=options.dir
 	# run the ops...
 	if options.showconfig:
 		mgr.showconfig()
@@ -51,3 +67,5 @@ def parse(mgr):
 		mgr.testconnect()
 	if options.create:
 		mgr.create()
+	if options.scan:
+		mgr.scan()

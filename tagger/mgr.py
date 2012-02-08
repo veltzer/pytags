@@ -34,17 +34,54 @@ class Mgr:
 	def testconnect(self):
 		self.connect()
 		self.disconnect()
-		#print "connection is ok"
 	def create(self):
 		self.connect()
 		if tagger.config.ns_op.p_force:
+			self.execute('DROP TABLE IF EXISTS TbFileTag');
+			self.execute('DROP TABLE IF EXISTS TbFile');
+			self.execute('DROP TABLE IF EXISTS TbTagRelations');
 			self.execute('DROP TABLE IF EXISTS TbTag');
 		self.execute("""
 			CREATE TABLE TbTag (
-				id INT NOT NULL AUTO_INCREMENT,
-				name VARCHAR(40) NOT NULL,
-				PRIMARY KEY(id),
-				UNIQUE KEY name (name)
+				f_id INT NOT NULL AUTO_INCREMENT,
+				f_name VARCHAR(40) NOT NULL,
+				f_description VARCHAR(256) NOT NULL,
+				PRIMARY KEY(f_id),
+				UNIQUE KEY f_name (f_name)
+			) ENGINE=InnoDB
+		""")
+		self.execute("""
+			CREATE TABLE TbTagRelations (
+				f_parent_tag INT NOT NULL,
+				f_child_tag INT NOT NULL,
+				KEY f_parent_tag (f_parent_tag),
+				KEY f_child_tag (f_child_tag),
+				CONSTRAINT FOREIGN KEY(f_parent_tag) REFERENCES TbTag(f_id),
+				CONSTRAINT FOREIGN KEY(f_child_tag) REFERENCES TbTag(f_id)
+			) ENGINE=InnoDB
+		""")
+		self.execute("""
+			CREATE TABLE TbFile (
+				f_id INT NOT NULL AUTO_INCREMENT,
+				f_name VARCHAR(256) NOT NULL,
+				f_mtime DATETIME NOT NULL,
+				f_parent INT,
+				PRIMARY KEY(f_id),
+				UNIQUE KEY f_name_id (f_id,f_name),
+				KEY f_parent (f_parent),
+				CONSTRAINT FOREIGN KEY(f_parent) REFERENCES TbFile(f_id)
+			) ENGINE=InnoDB
+		""")
+		self.execute("""
+			CREATE TABLE TbFileTag (
+				f_file INT NOT NULL,
+				f_tag INT NOT NULL,
+				KEY f_file (f_file),
+				KEY f_tag (f_tag),
+				CONSTRAINT FOREIGN KEY(f_file) REFERENCES TbFile(f_id),
+				CONSTRAINT FOREIGN KEY(f_tag) REFERENCES TbTag(f_id)
 			) ENGINE=InnoDB
 		""")
 		self.disconnect()
+	def scan(self):
+		directory=tagger.config.ns_mgr.p_dir

@@ -16,24 +16,24 @@ tagger --showconfig
 tagger --testconnect
 	Test the connection to the database to see if it's ok.
 	This is used to setup tagger correctly or for development purposes.
-
-future:
 tagger --create
 	will create the database
 	If the database exist then tagger will exit.
 	If passed --force will remove the old database and create a new one (use with care).
-tagger --update [--dir [dir]]
+tagger --scan
 	will scan the directory 'dir' recursivly (current directory is the default)
 	and will add its tag information into the database.
-	configuratin determines which files are actually scanned (you probably don't want to scan
-	binary files).
+	configuration determines which files are actually scanned (you probably don't want to scan
+	some files, like binary files).
 	Files which have already been scanned are not scanned.
+
+future:
+tagger --search [tags]
+	will list the set of files that have been tagged with these tags that are in the requested folder.
+	The default for the folder is the current folder.
 tagger --importrelations [file]
 	will import relationships file between tags.
 	tags which are mentioned in this file will have their previous relationships erased.
-tagger --search [--dir [dir]] [tags]
-	will list the set of files that have been tagged with these tags that are in the requested folder.
-	The default for the folder is the current folder.
 tagger --taglist
 	will list all tags known to tagger and their relationships.
 tagger --clean
