@@ -33,11 +33,11 @@ tagger --taglist
 	list all tags known to tagger and their relationships.
 
 future:
-tagger --importrelations [file]
-	will import relationships file between tags.
+tagger --importtags [file]
+	import file describing tags and relations between tags.
 	tags which are mentioned in this file will have their previous relationships erased.
 tagger --clean
-	will clear the tagger database.
+	will clean the tagger database.
 	must pass --force to show that you really want this.
 
 	Mark Veltzer, 2012
