@@ -23,3 +23,5 @@ class ns_mgr:
 	p_suppress_warnings=True
 	# which directory to scan?
 	p_dir='.'
+	# should we catch exceptions?
+	p_catch=False

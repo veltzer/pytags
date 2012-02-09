@@ -51,7 +51,7 @@ class Mgr:
 			else:
 				return None
 		else:
-			return row['f_id']
+			return row[0]
 	""" create a folder """
 	def createFolder(self,conn,id,name,curname):
 		if id is None:
