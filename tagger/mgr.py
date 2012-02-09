@@ -129,3 +129,5 @@ class Mgr:
 					break
 				print row[0]
 			cr.close()
+	def raiseexception(self):
+		raise ValueError('this is the exception message')
