@@ -131,3 +131,16 @@ class Mgr:
 			cr.close()
 	def raiseexception(self):
 		raise ValueError('this is the exception message')
+	def insertdir(self):
+		conn=self.connect()
+		with conn:
+			pass
+	def clean(self):
+		if not tagger.config.ns_op.p_force:
+			raise ValueError('must pass --force')
+		conn=self.connect()
+		with conn:
+			self.execute(conn,'DELETE FROM TbFileTag');
+			self.execute(conn,'DELETE FROM TbFile');
+			self.execute(conn,'DELETE FROM TbTagRelations');
+			self.execute(conn,'DELETE FROM TbTag');

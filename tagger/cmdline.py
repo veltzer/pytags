@@ -51,6 +51,18 @@ def parse(mgr):
 			action='store_true',
 			default=False,
 	)
+	parser.add_argument(
+			'--insertdir',
+			help='insert a directory into the database (for testing purposes)',
+			action='store_true',
+			default=False,
+	)
+	parser.add_argument(
+			'--clean',
+			help='clean the database (must pass --force)',
+			action='store_true',
+			default=False,
+	)
 	# variables overrides
 	parser.add_argument(
 			'--force',
@@ -76,8 +88,10 @@ def parse(mgr):
 		options.search,
 		options.taglist,
 		options.raiseexception,
+		options.insertdir,
+		options.clean,
 	])!=1:
-		parser.error('must specify one of showconfig,testconnect,create,scan,search,taglist,raiseexception')
+		parser.error('must specify one of showconfig,testconnect,create,scan,search,taglist,raiseexception,insertdir,clean')
 	# pass flags
 	tagger.config.ns_op.p_force=options.force
 	tagger.config.ns_mgr.p_dir=options.dir
@@ -96,3 +110,7 @@ def parse(mgr):
 		mgr.taglist()
 	if options.raiseexception:
 		mgr.raiseexception()
+	if options.insertdir:
+		mgr.insertdir()
+	if options.clean:
+		mgr.clean()
