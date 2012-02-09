@@ -21,3 +21,8 @@ disadvantages:
 	This actually happens to a lot of files when you change your hard drive.
 resolution:
 store file names as names and not as inodes.
+
+What about positions in files?
+==============================
+I could add another field in TbFileTag of line number and so the tag could also indicate
+the exact position in the file...
