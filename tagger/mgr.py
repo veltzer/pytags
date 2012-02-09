@@ -24,24 +24,42 @@ class Mgr:
 		cr.close()
 		return row
 	""" Run the given query, commit changes """
-	def execute(self,connection,stmt):
+	def execute(self,connection,stmt,commit):
+		print 'doing',stmt
 		cr=connection.cursor()
 		num_affected_rows=cr.execute(stmt)
 		cr.close()
-		connection.commit()
+		if commit:
+			connection.commit()
 		return num_affected_rows
 	def error(self,msg):
 		raise ValueError(msg)
-	# find the id of a file named name in folder with db id id
-	def find_id_in_folder(self,conn,id,name,curname):
-		query="""
-			SELECT f_id from TbFile WHERE f_name="%s" AND f_parent=%d
-		""" % (name,id)
+	""" find the id of a file named name in folder with db id id """
+	def find_id_in_folder(self,conn,id,name,curname,raiseError):
+		if id is None:
+			query="SELECT f_id from TbFile WHERE f_parent IS NULL"
+		else:
+			query="SELECT f_id from TbFile WHERE f_name=\"%s\" AND f_parent=%d" % (name,id)
 		row=self.get_row(conn,query)
 		if row is None:
-			raise ValueError('cannot find folder '+name+' in '+curname)
+			if raiseError:
+				if id is None:
+					msg='cannot find root folder'
+				else:
+					msg='cannot find folder '+name+' in '+curname
+				raise ValueError(msg)
+			else:
+				return None
 		else:
 			return row['f_id']
+	""" create a folder """
+	def createFolder(self,conn,id,name,curname):
+		if id is None:
+			query="INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES(\"%s\",FROM_UNIXTIME(%s),%s)" % (name,os.path.getmtime(curname),"NULL")
+		else:
+			query="INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES(\"%s\",FROM_UNIXTIME(%s),%s)" % (name,os.path.getmtime(curname),id)
+		self.execute(conn,query,False)
+		return conn.insert_id();
 	""" ops that can be launched from the command line """
 	def showconfig(self):
 		tagger.config.show()
@@ -52,10 +70,10 @@ class Mgr:
 		conn=self.connect()
 		with conn:
 			if tagger.config.ns_op.p_force:
-				self.execute(conn,'DROP TABLE IF EXISTS TbFileTag');
-				self.execute(conn,'DROP TABLE IF EXISTS TbFile');
-				self.execute(conn,'DROP TABLE IF EXISTS TbTagRelations');
-				self.execute(conn,'DROP TABLE IF EXISTS TbTag');
+				self.execute(conn,'DROP TABLE IF EXISTS TbFileTag',False)
+				self.execute(conn,'DROP TABLE IF EXISTS TbFile',False)
+				self.execute(conn,'DROP TABLE IF EXISTS TbTagRelations',False)
+				self.execute(conn,'DROP TABLE IF EXISTS TbTag',False)
 			self.execute(conn,"""
 				CREATE TABLE TbTag (
 					f_id INT NOT NULL AUTO_INCREMENT,
@@ -64,7 +82,7 @@ class Mgr:
 					PRIMARY KEY(f_id),
 					UNIQUE KEY f_name (f_name)
 				) ENGINE=InnoDB
-			""")
+			""",False)
 			self.execute(conn,"""
 				CREATE TABLE TbTagRelations (
 					f_parent_tag INT NOT NULL,
@@ -74,19 +92,19 @@ class Mgr:
 					CONSTRAINT FOREIGN KEY(f_parent_tag) REFERENCES TbTag(f_id),
 					CONSTRAINT FOREIGN KEY(f_child_tag) REFERENCES TbTag(f_id)
 				) ENGINE=InnoDB
-			""")
+			""",False)
 			self.execute(conn,"""
 				CREATE TABLE TbFile (
 					f_id INT NOT NULL AUTO_INCREMENT,
 					f_name VARCHAR(256) NOT NULL,
 					f_mtime DATETIME NOT NULL,
-					f_parent INT NOT NULL,
+					f_parent INT,
 					PRIMARY KEY(f_id),
 					UNIQUE KEY f_name_id (f_id,f_name),
 					KEY f_parent (f_parent),
 					CONSTRAINT FOREIGN KEY(f_parent) REFERENCES TbFile(f_id)
 				) ENGINE=InnoDB
-			""")
+			""",False)
 			self.execute(conn,"""
 				CREATE TABLE TbFileTag (
 					f_file INT NOT NULL,
@@ -96,11 +114,12 @@ class Mgr:
 				CONSTRAINT FOREIGN KEY(f_file) REFERENCES TbFile(f_id),
 				CONSTRAINT FOREIGN KEY(f_tag) REFERENCES TbTag(f_id)
 				) ENGINE=InnoDB
-			""")
+			""",False)
+			conn.commit()
 			#self.execute(conn,"""
 			#	INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)
 			#	""" % ('/',os.path.getmtime('/'),1)
-			#)
+			#,False)
 	def scan(self):
 		directory=tagger.config.ns_mgr.p_dir
 		# now add the directory if it's not there...
@@ -112,12 +131,11 @@ class Mgr:
 				self.error(directory+' is not a directory')
 			# turn the folder into absolute path
 			directory=os.path.abspath(directory)
-			# id of the root
-			id=1
-			curname='/'
-			for comp in directory.split('/')[1:]:
-				id=self.find_id_in_folder(conn,id,comp,curname)
-				curname=comp
+			curname=''
+			id=None
+			for comp in directory.split('/'):
+				curname+='/'+comp
+				id=self.find_id_in_folder(conn,id,comp,curname,True)
 	def taglist(self):
 		conn=self.connect()
 		with conn:
@@ -134,13 +152,40 @@ class Mgr:
 	def insertdir(self):
 		conn=self.connect()
 		with conn:
-			pass
+			directory=tagger.config.ns_mgr.p_dir
+			if not os.path.isdir(directory):
+				self.error(directory+' is not a directory')
+			# turn the folder into absolute path
+			directory=os.path.abspath(directory)
+			curname=''
+			id=None
+			find=True
+			for comp in directory.split('/'):
+				curname+='/'+comp
+				if find:
+					nextid=self.find_id_in_folder(conn,id,comp,curname,False)
+					if nextid is None:
+						find=False
+					else:
+						id=nextid
+				if not find:
+					id=self.createFolder(conn,id,comp,curname)
+			if not find:
+				conn.commit()
+
 	def clean(self):
 		if not tagger.config.ns_op.p_force:
 			raise ValueError('must pass --force')
 		conn=self.connect()
 		with conn:
-			self.execute(conn,'DELETE FROM TbFileTag');
-			self.execute(conn,'DELETE FROM TbFile');
-			self.execute(conn,'DELETE FROM TbTagRelations');
-			self.execute(conn,'DELETE FROM TbTag');
+			self.execute(conn,'SET foreign_key_checks = 0',False)
+			self.execute(conn,'DELETE FROM TbFileTag',False)
+			self.execute(conn,'DELETE FROM TbFile',False)
+			self.execute(conn,'DELETE FROM TbTagRelations',False)
+			self.execute(conn,'DELETE FROM TbTag',False)
+			self.execute(conn,'ALTER TABLE TbFileTag AUTO_INCREMENT = 1',False)
+			self.execute(conn,'ALTER TABLE TbFile AUTO_INCREMENT = 1',False)
+			self.execute(conn,'ALTER TABLE TbTagRelations AUTO_INCREMENT = 1',False)
+			self.execute(conn,'ALTER TABLE TbTag AUTO_INCREMENT = 1',False)
+			self.execute(conn,'SET foreign_key_checks = 1',False)
+			conn.commit()

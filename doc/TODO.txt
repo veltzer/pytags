@@ -1,2 +1,12 @@
-- when ever there is an error and I throw an exception I see lots of junk on
-	the screen. How do I do a cleaner exception handling thingy?
+core
+====
+do the insertdir target
+
+misc
+====
+add command line autocompletion bash for this package.
+do a manual page for this tool.
+
+build system
+============
+make a package out of this and put it up on my site (install it on my laptop).

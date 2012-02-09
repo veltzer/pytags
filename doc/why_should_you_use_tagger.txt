@@ -1,0 +1,13 @@
+- because you have many files and you want to tag them and search them efficiently.
+- because you believe that tagging is a better way to organize many files than
+	plain old folders.
+- because searching by tags is a LOT better and a LOT cleaner than searching the
+	actual files.
+- because tagging allows you to put each file in many categories instead of just
+	one.
+- because you don't need to change any of the tools you are using and you can
+	use tagger for any programming language what so ever.
+- because you want the relations between tags that tagger offers to do
+	tagging quickly.
+- because you want tags to go with the file they are tagging and not be
+	outside the file.
