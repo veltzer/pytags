@@ -66,6 +66,25 @@ class Mgr:
 	def testconnect(self):
 		with self.connect():
 			pass
+	@staticmethod
+	def getCursor(conn):
+		#return conn.cursor()
+		return conn.cursor(MySQLdb.cursors.DictCursor)
+	def loadTags(self):
+		# the dictionary for the tags
+		self.tags={}
+		conn=self.connect()
+		with conn:
+			cr=Mgr.getCursor(conn)
+			cr.execute('SELECT f_id,f_name,f_description from TbTag')
+			while True:
+				row=cr.fetchone()
+				if row is None:
+					break
+				# name to id mapping...
+				self.tags[row['f_name']]=row['f_id']
+				#print('inserting key ',row['f_name'],' value ',row['f_id'])
+			cr.close()
 	def create(self):
 		conn=self.connect()
 		with conn:
@@ -123,6 +142,7 @@ class Mgr:
 	def scan(self):
 		directory=tagger.config.ns_mgr.p_dir
 		# now add the directory if it's not there...
+		self.loadTags()
 	def search(self):
 		conn=self.connect()
 		with conn:
@@ -173,6 +193,11 @@ class Mgr:
 			if not find:
 				conn.commit()
 
+	def inserttag(self):
+		conn=self.connect()
+		with conn:
+			query="INSERT INTO TbTag (f_name,f_description) VALUES(\"%s\",\"%s\")" % ('tagname','tagdescription')
+			self.execute(conn,query,True)
 	def clean(self):
 		if not tagger.config.ns_op.p_force:
 			raise ValueError('must pass --force')

@@ -1,6 +1,9 @@
 core
 ====
-do the insertdir target
+- do the walking and the scanning.
+	make the walking insert the tags into the database if they are missing.
+	load all the tag names at the begining from the database so that I will know which tags exist
+	and which do not.
 
 misc
 ====
