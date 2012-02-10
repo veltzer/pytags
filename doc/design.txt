@@ -26,3 +26,13 @@ What about positions in files?
 ==============================
 I could add another field in TbFileTag of line number and so the tag could also indicate
 the exact position in the file...
+
+What about 'databased less' tagger?
+===================================
+the idea is that tagger will be used much like git. 'tagger init' will create a .tagger
+folder where it will automatically put a config file where you can configure tagger.
+Under that folder tagger will put all the data about the tags you are using.
+
+This sounds like a good idea and does not require a database at all.
+It looks like this will work fine even for moderate/large project.
+Think seriously about implementing this.
