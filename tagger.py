@@ -4,15 +4,14 @@ import tagger.cmdline
 import tagger.mgr
 import tagger.config
 
-mgr=tagger.mgr.Mgr()
-tagger.cmdline.parse(mgr)
-'''
-try:
+def work():
 	mgr=tagger.mgr.Mgr()
 	tagger.cmdline.parse(mgr)
-except Exception,e:
-	if tagger.config.ns_mgr.p_catch:
+
+if tagger.config.ns_mgr.p_catch:
+	try:
+		work()
+	except Exception,e:
 		print e
-	else:
-		raise e
-'''
+else:
+	work()
