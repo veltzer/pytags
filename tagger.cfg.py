@@ -6,7 +6,8 @@ import tagger.utils.boot
 class ns_product:
 	# general info about the tagger product
 	p_name='tagger'
-	p_version=tagger.utils.boot.system_check_output(['git','describe']).rstrip()
+	#p_version=tagger.utils.boot.system_check_output(['git','describe']).rstrip()
+	p_version=0.1
 	p_description='Tagger tagging wizard / Mark Veltzer'
 class ns_db:
 	# db connection details (don't put passwords here, put them in ~/.tagger.cfg.py instead)

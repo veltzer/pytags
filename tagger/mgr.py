@@ -8,10 +8,18 @@ class Mgr:
 		# remove mysql warnings...
 		if tagger.config.ns_mgr.p_suppress_warnings:
 			warnings.filterwarnings('ignore', category = MySQLdb.Warning)
-	""" helpers """
+	''' helpers '''
 	def connect(self):
 		return MySQLdb.connect(
 			db=tagger.config.ns_db.p_db,
+			host=tagger.config.ns_db.p_host,
+			port=tagger.config.ns_db.p_port,
+			user=tagger.config.ns_db.p_user,
+			passwd=tagger.config.ns_db.p_password,
+		)
+	def connectNodb(self):
+		return MySQLdb.connect(
+			db='mysql',
 			host=tagger.config.ns_db.p_host,
 			port=tagger.config.ns_db.p_port,
 			user=tagger.config.ns_db.p_user,
@@ -23,9 +31,10 @@ class Mgr:
 		row=cr.fetchone()
 		cr.close()
 		return row
-	""" Run the given query, commit changes """
+	''' Run the given query, commit changes '''
 	def execute(self,connection,stmt,commit):
-		print 'doing',stmt
+		if tagger.config.ns_op.p_sql_debug:
+			print 'doing',stmt
 		cr=connection.cursor()
 		num_affected_rows=cr.execute(stmt)
 		cr.close()
@@ -34,12 +43,12 @@ class Mgr:
 		return num_affected_rows
 	def error(self,msg):
 		raise ValueError(msg)
-	""" find the id of a file named name in folder with db id id """
+	''' find the id of a file named name in folder with db id id '''
 	def find_id_in_folder(self,conn,id,name,curname,raiseError):
 		if id is None:
-			query="SELECT f_id from TbFile WHERE f_parent IS NULL"
+			query='SELECT f_id from TbFile WHERE f_parent IS NULL'
 		else:
-			query="SELECT f_id from TbFile WHERE f_name=\"%s\" AND f_parent=%d" % (name,id)
+			query='SELECT f_id from TbFile WHERE f_name="%s" AND f_parent=%d' % (name,id)
 		row=self.get_row(conn,query)
 		if row is None:
 			if raiseError:
@@ -52,15 +61,15 @@ class Mgr:
 				return None
 		else:
 			return row[0]
-	""" create a folder """
+	''' create a folder '''
 	def createFolder(self,conn,id,name,curname):
 		if id is None:
-			query="INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES(\"%s\",FROM_UNIXTIME(%s),%s)" % (name,os.path.getmtime(curname),"NULL")
+			query='INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)' % (name,os.path.getmtime(curname),'NULL')
 		else:
-			query="INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES(\"%s\",FROM_UNIXTIME(%s),%s)" % (name,os.path.getmtime(curname),id)
+			query='INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)' % (name,os.path.getmtime(curname),id)
 		self.execute(conn,query,False)
 		return conn.insert_id();
-	""" ops that can be launched from the command line """
+	''' ops that can be launched from the command line '''
 	def showconfig(self):
 		tagger.config.show()
 	def testconnect(self):
@@ -85,15 +94,34 @@ class Mgr:
 				self.tags[row['f_name']]=row['f_id']
 				#print('inserting key ',row['f_name'],' value ',row['f_id'])
 			cr.close()
-	def create(self):
+	def dropTables(self,conn):
+		self.execute(conn,'DROP DATABASE IF EXISTS TbFileTag',False)
+		self.execute(conn,'DROP TABLE IF EXISTS TbFileTag',False)
+		self.execute(conn,'DROP TABLE IF EXISTS TbFile',False)
+		self.execute(conn,'DROP TABLE IF EXISTS TbTagRelations',False)
+		self.execute(conn,'DROP TABLE IF EXISTS TbTag',False)
+	def createdb(self):
+		# remove the old database if force is in place
+		if tagger.config.ns_op.p_force:
+			try:
+				conn=self.connect()
+				print 'found database - removing it...'
+				with conn:
+					query='DROP DATABASE IF EXISTS %s' % (tagger.config.ns_db.p_db)
+					self.execute(conn,query,True)
+			except:
+				print 'no previous database detected'
+		# create the database
+		conn=self.connectNodb()
+		with conn:
+			print 'creating the empty database...'
+			query='CREATE DATABASE %s' % (tagger.config.ns_db.p_db)
+			self.execute(conn,query,True)
+		# connect to a clean database
 		conn=self.connect()
 		with conn:
-			if tagger.config.ns_op.p_force:
-				self.execute(conn,'DROP TABLE IF EXISTS TbFileTag',False)
-				self.execute(conn,'DROP TABLE IF EXISTS TbFile',False)
-				self.execute(conn,'DROP TABLE IF EXISTS TbTagRelations',False)
-				self.execute(conn,'DROP TABLE IF EXISTS TbTag',False)
-			self.execute(conn,"""
+			print 'creating the tables...'
+			self.execute(conn,'''
 				CREATE TABLE TbTag (
 					f_id INT NOT NULL AUTO_INCREMENT,
 					f_name VARCHAR(40) NOT NULL,
@@ -101,8 +129,8 @@ class Mgr:
 					PRIMARY KEY(f_id),
 					UNIQUE KEY f_name (f_name)
 				) ENGINE=InnoDB
-			""",False)
-			self.execute(conn,"""
+			''',False)
+			self.execute(conn,'''
 				CREATE TABLE TbTagRelations (
 					f_parent_tag INT NOT NULL,
 					f_child_tag INT NOT NULL,
@@ -111,8 +139,8 @@ class Mgr:
 					CONSTRAINT FOREIGN KEY(f_parent_tag) REFERENCES TbTag(f_id),
 					CONSTRAINT FOREIGN KEY(f_child_tag) REFERENCES TbTag(f_id)
 				) ENGINE=InnoDB
-			""",False)
-			self.execute(conn,"""
+			''',False)
+			self.execute(conn,'''
 				CREATE TABLE TbFile (
 					f_id INT NOT NULL AUTO_INCREMENT,
 					f_name VARCHAR(256) NOT NULL,
@@ -123,8 +151,8 @@ class Mgr:
 					KEY f_parent (f_parent),
 					CONSTRAINT FOREIGN KEY(f_parent) REFERENCES TbFile(f_id)
 				) ENGINE=InnoDB
-			""",False)
-			self.execute(conn,"""
+			''',False)
+			self.execute(conn,'''
 				CREATE TABLE TbFileTag (
 					f_file INT NOT NULL,
 					f_tag INT NOT NULL,
@@ -133,11 +161,11 @@ class Mgr:
 				CONSTRAINT FOREIGN KEY(f_file) REFERENCES TbFile(f_id),
 				CONSTRAINT FOREIGN KEY(f_tag) REFERENCES TbTag(f_id)
 				) ENGINE=InnoDB
-			""",False)
+			''',False)
 			conn.commit()
-			#self.execute(conn,"""
+			#self.execute(conn,'''
 			#	INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)
-			#	""" % ('/',os.path.getmtime('/'),1)
+			#	''' % ('/',os.path.getmtime('/'),1)
 			#,False)
 	def scan(self):
 		directory=tagger.config.ns_mgr.p_dir
@@ -196,7 +224,7 @@ class Mgr:
 	def inserttag(self):
 		conn=self.connect()
 		with conn:
-			query="INSERT INTO TbTag (f_name,f_description) VALUES(\"%s\",\"%s\")" % ('tagname','tagdescription')
+			query='INSERT INTO TbTag (f_name,f_description) VALUES("%s","%s")' % ('tagname','tagdescription')
 			self.execute(conn,query,True)
 	def clean(self):
 		if not tagger.config.ns_op.p_force:

@@ -22,7 +22,7 @@ def parse(mgr):
 			default=False,
 	)
 	parser.add_argument(
-			'--create',
+			'--createdb',
 			help='create the database (use --force to remove old)',
 			action='store_true',
 			default=False,
@@ -89,7 +89,7 @@ def parse(mgr):
 	if sum([
 		options.showconfig,
 		options.testconnect,
-		options.create,
+		options.createdb,
 		options.scan,
 		options.search,
 		options.taglist,
@@ -98,7 +98,7 @@ def parse(mgr):
 		options.inserttag,
 		options.clean,
 	])!=1:
-		parser.error('must specify one of showconfig,testconnect,create,scan,search,taglist,raiseexception,insertdir,inserttag,clean')
+		parser.error('must specify one of showconfig,testconnect,createdb,scan,search,taglist,raiseexception,insertdir,inserttag,clean')
 	# pass flags
 	tagger.config.ns_op.p_force=options.force
 	tagger.config.ns_mgr.p_dir=options.dir
@@ -107,8 +107,8 @@ def parse(mgr):
 		mgr.showconfig()
 	if options.testconnect:
 		mgr.testconnect()
-	if options.create:
-		mgr.create()
+	if options.createdb:
+		mgr.createdb()
 	if options.scan:
 		mgr.scan()
 	if options.search:
