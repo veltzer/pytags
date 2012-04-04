@@ -31,6 +31,10 @@ class Mgr:
 		row=cr.fetchone()
 		cr.close()
 		return row
+	@staticmethod
+	def debug(string):
+		if tagger.config.ns_op.p_debug:
+			print string
 	''' Run the given query, commit changes '''
 	def execute(self,connection,stmt,commit):
 		if tagger.config.ns_op.p_sql_debug:
@@ -86,13 +90,12 @@ class Mgr:
 		with conn:
 			cr=Mgr.getCursor(conn)
 			cr.execute('SELECT f_id,f_name,f_description from TbTag')
-			while True:
-				row=cr.fetchone()
-				if row is None:
-					break
+			row=cr.fetchone()
+			while row is not None:
 				# name to id mapping...
 				self.tags[row['f_name']]=row['f_id']
-				#print('inserting key ',row['f_name'],' value ',row['f_id'])
+				Mgr.debug('inserting key %s value %s' % (row['f_name'],row['f_id']))
+				row=cr.fetchone()
 			cr.close()
 	def dropTables(self,conn):
 		self.execute(conn,'DROP DATABASE IF EXISTS TbFileTag',False)
@@ -168,9 +171,10 @@ class Mgr:
 			#	''' % ('/',os.path.getmtime('/'),1)
 			#,False)
 	def scan(self):
-		directory=tagger.config.ns_mgr.p_dir
-		# now add the directory if it's not there...
+		# first load all the current tags
 		self.loadTags()
+		# now add the directory if it's not there...
+		directory=tagger.config.ns_mgr.p_dir
 	def search(self):
 		conn=self.connect()
 		with conn:

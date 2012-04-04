@@ -4,6 +4,9 @@ import tagger.cmdline
 import tagger.mgr
 import tagger.config
 
+mgr=tagger.mgr.Mgr()
+tagger.cmdline.parse(mgr)
+'''
 try:
 	mgr=tagger.mgr.Mgr()
 	tagger.cmdline.parse(mgr)
@@ -12,3 +15,4 @@ except Exception,e:
 		print e
 	else:
 		raise e
+'''
