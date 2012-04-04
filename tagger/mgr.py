@@ -191,13 +191,12 @@ class Mgr:
 	def taglist(self):
 		conn=self.connect()
 		with conn:
-			cr=conn.cursor()
+			cr=Mgr.getCursor(conn)
 			cr.execute('SELECT f_name from TbTag')
-			while True:
+			row=cr.fetchone()
+			while row is not None:
+				print row['f_name']
 				row=cr.fetchone()
-				if row is None:
-					break
-				print row[0]
 			cr.close()
 	def raiseexception(self):
 		raise ValueError('this is the exception message')
