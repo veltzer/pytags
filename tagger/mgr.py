@@ -26,7 +26,7 @@ class Mgr:
 			passwd=tagger.config.ns_db.p_password,
 		)
 	def get_row(self,connection,query):
-		cr=connection.cursor()
+		cr=Mgr.getCursor(connection)
 		cr.execute(query)
 		row=cr.fetchone()
 		cr.close()
@@ -39,7 +39,7 @@ class Mgr:
 	def execute(self,connection,stmt,commit):
 		if tagger.config.ns_op.p_sql_debug:
 			print 'doing',stmt
-		cr=connection.cursor()
+		cr=Mgr.getCursor(connection)
 		num_affected_rows=cr.execute(stmt)
 		cr.close()
 		if commit:
