@@ -1,11 +1,11 @@
 import setuptools
 
 setuptools.setup(
-    name='pytag',
+    name='pytags',
     version='0.0.6',
     description='module to help you tag interesting places in your code',
     long_description='module to help you tag interesting places in your code',
-    url='https://veltzer.github.io/pytag',
+    url='https://veltzer.github.io/pytags',
     author='Mark Veltzer',
     author_email='mark.veltzer@gmail.com',
     license='GPL3',
@@ -16,12 +16,12 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
     ],
-    keywords='pytag tag code command line',
+    keywords='pytags tag code command line',
     package_dir={'': 'src'},
     packages=setuptools.find_packages('src'),
     entry_points={
         'console_scripts': [
-            'tagger=pytag.tagger:main',
+            'tagger=pytags.tagger:main',
         ],
     },
 )
