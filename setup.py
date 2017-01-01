@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='pytagger',
-    version='0.0.5',
+    version='0.0.6',
     description='module to help you tag interesting places in your code',
     long_description='module to help you tag interesting places in your code',
     url='https://veltzer.github.io/pytagger',
@@ -23,4 +23,5 @@ setuptools.setup(
         'console_scripts': [
             'tagger=pytagger.tagger:main',
         ],
+    },
 )
