@@ -1,5 +1,9 @@
 import setuptools
 
+import sys
+if not sys.version_info[0] == 3:
+    sys.exit("Sorry, only python version 3 is supported")
+
 setuptools.setup(
     name='pytags',
     version='0.0.7',
