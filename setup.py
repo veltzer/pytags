@@ -12,13 +12,12 @@ setuptools.setup(
     url='https://veltzer.github.io/pytags',
     author='Mark Veltzer',
     author_email='mark.veltzer@gmail.com',
-    license='GPL3',
+    license='MIT',
     classifiers=[
+        'License :: OSI Approved :: MIT License'
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
     ],
     keywords='pytags tag code command line',
     package_dir={'': 'src'},
