@@ -6,7 +6,7 @@ if not sys.version_info[0] == 3:
 
 setuptools.setup(
     name='pytags',
-    version='0.0.8',
+    version='0.0.9',
     description='module to help you tag interesting places in your code',
     long_description='module to help you tag interesting places in your code',
     url='https://veltzer.github.io/pytags',
@@ -19,8 +19,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
     ],
     keywords='pytags tag code command line',
-    package_dir={'': 'src'},
-    packages=setuptools.find_packages('src'),
+    packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
             'tagger=pytags.tagger:main',
