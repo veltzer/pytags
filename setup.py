@@ -5,7 +5,7 @@ setuptools.setup(
     version='0.0.9',
     description='module to help you tag interesting places in your code',
     long_description='module to help you tag interesting places in your code',
-    url='https://github.com/veltzer/pytags',
+    url='https://veltzer.github.io/pytags',
     download_url='https://github.com/veltzer/pytags',
     author='Mark Veltzer',
     author_email='mark.veltzer@gmail.com',
