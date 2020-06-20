@@ -86,3 +86,4 @@ celerybeat-schedule
 
 # Rope project settings
 .ropeproject
+/node_modules/
