@@ -1,7 +1,6 @@
 import datetime
 import os
 import socket
-import subprocess
 
 general_current_folder = os.path.basename(os.getcwd())
 general_current_year = datetime.datetime.now().year
