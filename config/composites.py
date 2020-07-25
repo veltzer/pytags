@@ -1,4 +1,4 @@
 import config.apt
-from config.git import git_version
+import config.git
 
-deb_version = '{0}~{1}'.format(git_version, config.apt.apt_codename)
+deb_version = '{0}~{1}'.format(config.git.git_version, config.apt.apt_codename)
