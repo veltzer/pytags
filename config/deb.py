@@ -1,10 +1,12 @@
 import os
+import config.project
+import subprocess
 
 deb_package = True
 deb_section = 'python'
 deb_priority = 'optional'
 deb_architecture = 'all'
-deb_package_name = 'pyscrapers'
+deb_package_name = config.project.project_name
 # to which series to publish the package?
 deb_series = [
     'artful',
@@ -28,6 +30,5 @@ deb_out_folder = 'out'
 # where to build source packages?
 # build_gbp = build.gbp
 
-# create this with 'date -R'
-# TODO: this should be created automatically here in python
-deb_date = 'Mon, 17 Oct 2016 09:44:00 +0300'
+# for example 'Mon, 17 Oct 2016 09:44:00 +0300'
+deb_date = subprocess.check_output("date -R").decode().rstrip()
