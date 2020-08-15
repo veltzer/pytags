@@ -17,8 +17,11 @@
 ![Downloads](https://pepy.tech/badge/pytags/week)
 
 
+
 module to help you tag interesting places in your code
 
 project website: <https://veltzer.github.io/pytags>
+
+chat with me at [![gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/veltzer/mark.veltzer)
 
 
