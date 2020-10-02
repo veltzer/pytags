@@ -16,6 +16,8 @@
 ![Downloads](https://pepy.tech/badge/pytags/month)
 ![Downloads](https://pepy.tech/badge/pytags/week)
 
+[![Known Vulnerabilities](https://snyk.io/test/github/veltzer/pytags/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/veltzer/pytags?targetFile=requirements.txt)
+
 
 
 module to help you tag interesting places in your code
