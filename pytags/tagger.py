@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-import tagger.cmdline
-import tagger.mgr
+import pytags.cmdline
+import pytags.mgr
 import tagger.config
 
 def work():
@@ -12,8 +12,8 @@ def main():
     if tagger.config.ns_mgr.p_catch:
         try:
             work()
-        except Exception,e:
-            print e
+        except Exception as e:
+            print(e)
     else:
         work()
 
