@@ -72,3 +72,5 @@ project_paypal_donate_button_snipplet = '''<form action="https://www.paypal.com/
 alt="PayPal - The safer, easier way to pay online!">
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 </form>'''.format(project_paypal_donate_button_id)
+
+codacy_id = None
