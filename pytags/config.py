@@ -29,9 +29,14 @@ ns_db = {
         "p_host": None,
         "p_user": None,
         "p_password": None,
+        "p_db": None,
 }
 ns_op = {
         "force": True,
+        "debug": True,
+        "p_sql_debug": True,
 }
 ns_mgr = {
+        "p_suppress_warnings": False,
+        "p_dir": None,
 }

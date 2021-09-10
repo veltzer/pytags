@@ -8,24 +8,24 @@ Q_INSERT='INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME
 class Mgr:
     def __init__(self):
         # remove mysql warnings...
-        if pytags.config.ns_mgr.p_suppress_warnings:
+        if pytags.config.ns_mgr["p_suppress_warnings"]:
             warnings.filterwarnings('ignore', category = MySQLdb.Warning)
         self.tags = {}
     def connect(self):
         return MySQLdb.connect(
-            db=pytags.config.ns_db.p_db,
-            host=pytags.config.ns_db.p_host,
-            port=pytags.config.ns_db.p_port,
-            user=pytags.config.ns_db.p_user,
-            passwd=pytags.config.ns_db.p_password,
+            db=pytags.config.ns_db["p_db"],
+            host=pytags.config.ns_db["p_host"],
+            port=pytags.config.ns_db["p_port"],
+            user=pytags.config.ns_db["p_user"],
+            passwd=pytags.config.ns_db["p_password"],
         )
     def connectNodb(self):
         return MySQLdb.connect(
             db='mysql',
-            host=pytags.config.ns_db.p_host,
-            port=pytags.config.ns_db.p_port,
-            user=pytags.config.ns_db.p_user,
-            passwd=pytags.config.ns_db.p_password,
+            host=pytags.config.ns_db["p_host"],
+            port=pytags.config.ns_db["p_port"],
+            user=pytags.config.ns_db["p_user"],
+            passwd=pytags.config.ns_db["p_password"],
         )
     def get_row(self,connection,query):
         cr=Mgr.getCursor(connection)
@@ -35,11 +35,11 @@ class Mgr:
         return row
     @staticmethod
     def debug(string):
-        if pytags.config.ns_op.p_debug:
+        if pytags.config.ns_op["p_debug"]:
             print(string)
     def execute(self,connection,stmt,commit):
         """ Run the given query, commit changes """
-        if pytags.config.ns_op.p_sql_debug:
+        if pytags.config.ns_op["p_sql_debug"]:
             print(f"doing {stmt}")
         cr=Mgr.getCursor(connection)
         num_affected_rows=cr.execute(stmt)
@@ -63,10 +63,8 @@ class Mgr:
                 else:
                     msg='cannot find folder '+name+' in '+curname
                 raise ValueError(msg)
-            else:
-                return None
-        else:
-            return row[0]
+            return None
+        return row[0]
     def createFolder(self,conn,folder_id,name,curname):
         """ create a folder """
         if folder_id is None:
@@ -111,7 +109,7 @@ class Mgr:
                 conn=self.connect()
                 print('found database - removing it...')
                 with conn:
-                    query='DROP DATABASE IF EXISTS %s' % (pytags.config.ns_db.p_db)
+                    query='DROP DATABASE IF EXISTS %s' % (pytags.config.ns_db["p_db"])
                     self.execute(conn,query,True)
             except MysqlExceptiontype:
                 print('no previous database detected')
@@ -119,7 +117,7 @@ class Mgr:
         conn=self.connectNodb()
         with conn:
             print('creating the empty database...')
-            query='CREATE DATABASE %s' % (pytags.config.ns_db.p_db)
+            query='CREATE DATABASE %s' % (pytags.config.ns_db["p_db"])
             self.execute(conn,query,True)
         # connect to a clean database
         conn=self.connect()
@@ -179,7 +177,7 @@ class Mgr:
     def search(self):
         conn=self.connect()
         with conn:
-            directory=pytags.config.ns_mgr.p_dir
+            directory=pytags.config.ns_mgr["p_dir"]
             if not os.path.isdir(directory):
                 self.error(directory+' is not a directory')
             # turn the folder into absolute path
@@ -204,7 +202,7 @@ class Mgr:
     def insertdir(self):
         conn=self.connect()
         with conn:
-            directory=pytags.config.ns_mgr.p_dir
+            directory=pytags.config.ns_mgr["p_dir"]
             if not os.path.isdir(directory):
                 self.error(directory+' is not a directory')
             # turn the folder into absolute path
