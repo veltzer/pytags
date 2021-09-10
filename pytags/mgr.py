@@ -1,126 +1,126 @@
-import warnings
 import os
+
+import mysql.connector
 
 import pytags.config
 
-Q_INSERT='INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)'
+Q_INSERT = 'INSERT INTO TbFile (f_name, f_mtime, f_parent) VALUES("%s", FROM_UNIXTIME(%s), %s)'
+
 
 class Mgr:
     def __init__(self):
-        # remove mysql warnings...
-        if pytags.config.ns_mgr["p_suppress_warnings"]:
-            warnings.filterwarnings('ignore', category = MySQLdb.Warning)
         self.tags = {}
+
     def connect(self):
-        return MySQLdb.connect(
-            db=pytags.config.ns_db["p_db"],
-            host=pytags.config.ns_db["p_host"],
-            port=pytags.config.ns_db["p_port"],
-            user=pytags.config.ns_db["p_user"],
-            passwd=pytags.config.ns_db["p_password"],
-        )
+        return mysql.connector.Connect({})
+
     def connectNodb(self):
-        return MySQLdb.connect(
-            db='mysql',
-            host=pytags.config.ns_db["p_host"],
-            port=pytags.config.ns_db["p_port"],
-            user=pytags.config.ns_db["p_user"],
-            passwd=pytags.config.ns_db["p_password"],
-        )
-    def get_row(self,connection,query):
-        cr=Mgr.getCursor(connection)
+        return mysql.connector.Connect({})
+
+    def get_row(self, connection, query):
+        cr = Mgr.getCursor(connection)
         cr.execute(query)
-        row=cr.fetchone()
+        row = cr.fetchone()
         cr.close()
         return row
+
     @staticmethod
     def debug(string):
         if pytags.config.ns_op["p_debug"]:
             print(string)
-    def execute(self,connection,stmt,commit):
+
+    def execute(self, connection, stmt, commit):
         """ Run the given query, commit changes """
         if pytags.config.ns_op["p_sql_debug"]:
             print(f"doing {stmt}")
-        cr=Mgr.getCursor(connection)
-        num_affected_rows=cr.execute(stmt)
+        cr = Mgr.getCursor(connection)
+        num_affected_rows = cr.execute(stmt)
         cr.close()
         if commit:
             connection.commit()
         return num_affected_rows
-    def error(self,msg):
+
+    def error(self, msg):
         raise ValueError(msg)
+
     def find_id_in_folder(self,conn,folder_id,name,curname,raiseError):
         """ find the id of a file named name in folder with db id id """
         if folder_id is None:
-            query='SELECT f_id from TbFile WHERE f_parent IS NULL'
+            query = 'SELECT f_id from TbFile WHERE f_parent IS NULL'
         else:
-            query='SELECT f_id from TbFile WHERE f_name="%s" AND f_parent=%d' % (name,folder_id)
-        row=self.get_row(conn,query)
+            query = 'SELECT f_id from TbFile WHERE f_name="%s" AND f_parent=%d' % (name,folder_id)
+        row = self.get_row(conn,query)
         if row is None:
             if raiseError:
                 if folder_id is None:
-                    msg='cannot find root folder'
+                    msg = 'cannot find root folder'
                 else:
-                    msg='cannot find folder '+name+' in '+curname
+                    msg = 'cannot find folder ' + name + ' in ' + curname
                 raise ValueError(msg)
             return None
         return row[0]
+
     def createFolder(self,conn,folder_id,name,curname):
         """ create a folder """
         if folder_id is None:
-            query=Q_INSERT % (name,os.path.getmtime(curname),'NULL')
+            query = Q_INSERT % (name,os.path.getmtime(curname),'NULL')
         else:
-            query=Q_INSERT % (name,os.path.getmtime(curname),folder_id)
+            query = Q_INSERT % (name,os.path.getmtime(curname),folder_id)
         self.execute(conn,query,False)
         return conn.insert_id()
+
     def showconfig(self):
         pytags.config.show()
+
     def testconnect(self):
         with self.connect():
             pass
+
     @staticmethod
     def getCursor(conn):
-        #return conn.cursor()
-        return conn.cursor(MySQLdb.cursors.DictCursor)
+        return conn.cursor()
+
     def loadTags(self):
         # the dictionary for the tags
-        self.tags={}
-        conn=self.connect()
+        self.tags = {}
+        conn = self.connect()
         with conn:
-            cr=Mgr.getCursor(conn)
+            cr = Mgr.getCursor(conn)
             cr.execute('SELECT f_id,f_name,f_description from TbTag')
-            row=cr.fetchone()
+            row = cr.fetchone()
             while row is not None:
                 # name to id mapping...
-                self.tags[row['f_name']]=row['f_id']
+                self.tags[row['f_name']] = row['f_id']
                 Mgr.debug('inserting key %s value %s' % (row['f_name'],row['f_id']))
-                row=cr.fetchone()
+                row = cr.fetchone()
             cr.close()
+
     def dropTables(self,conn):
         self.execute(conn,'DROP DATABASE IF EXISTS TbFileTag',False)
         self.execute(conn,'DROP TABLE IF EXISTS TbFileTag',False)
         self.execute(conn,'DROP TABLE IF EXISTS TbFile',False)
         self.execute(conn,'DROP TABLE IF EXISTS TbTagRelations',False)
         self.execute(conn,'DROP TABLE IF EXISTS TbTag',False)
+
     def createdb(self):
         # remove the old database if force is in place
         if pytags.config.ns_op["p_force"]:
             try:
-                conn=self.connect()
+                conn = self.connect()
                 print('found database - removing it...')
                 with conn:
-                    query='DROP DATABASE IF EXISTS %s' % (pytags.config.ns_db["p_db"])
+                    query = 'DROP DATABASE IF EXISTS %s' % (pytags.config.ns_db["p_db"])
                     self.execute(conn,query,True)
-            except MysqlExceptiontype:
+            except mysql.connector.Error:
                 print('no previous database detected')
         # create the database
-        conn=self.connectNodb()
+        conn = self.connectNodb()
         with conn:
             print('creating the empty database...')
-            query='CREATE DATABASE %s' % (pytags.config.ns_db["p_db"])
+            query = 'CREATE DATABASE %s' % (pytags.config.ns_db["p_db"])
             self.execute(conn,query,True)
         # connect to a clean database
-        conn=self.connect()
+        conn = self.connect()
         with conn:
             print('creating the tables...')
             self.execute(conn,'''
@@ -173,65 +173,69 @@ class Mgr:
         # first load all the current tags
         self.loadTags()
         # now add the directory if it's not there...
-        # directory=pytags.config.ns_mgr.p_dir
+        # directory = pytags.config.ns_mgr.p_dir
     def search(self):
-        conn=self.connect()
+        conn = self.connect()
         with conn:
-            directory=pytags.config.ns_mgr["p_dir"]
+            directory = pytags.config.ns_mgr["p_dir"]
             if not os.path.isdir(directory):
-                self.error(directory+' is not a directory')
+                self.error(directory + ' is not a directory')
             # turn the folder into absolute path
-            directory=os.path.abspath(directory)
-            curname=''
-            folder_id=None
+            directory = os.path.abspath(directory)
+            curname = ''
+            folder_id = None
             for comp in directory.split('/'):
-                curname+='/'+comp
-                folder_id=self.find_id_in_folder(conn,folder_id,comp,curname,True)
+                curname += '/' + comp
+                folder_id = self.find_id_in_folder(conn,folder_id,comp,curname,True)
+
     def taglist(self):
-        conn=self.connect()
+        conn = self.connect()
         with conn:
-            cr=Mgr.getCursor(conn)
+            cr = Mgr.getCursor(conn)
             cr.execute('SELECT f_name from TbTag')
-            row=cr.fetchone()
+            row = cr.fetchone()
             while row is not None:
                 print(row['f_name'])
-                row=cr.fetchone()
+                row = cr.fetchone()
             cr.close()
+
     def raiseexception(self):
         raise ValueError('this is the exception message')
+
     def insertdir(self):
-        conn=self.connect()
+        conn = self.connect()
         with conn:
-            directory=pytags.config.ns_mgr["p_dir"]
+            directory = pytags.config.ns_mgr["p_dir"]
             if not os.path.isdir(directory):
                 self.error(directory+' is not a directory')
             # turn the folder into absolute path
-            directory=os.path.abspath(directory)
-            curname=''
-            folder_id=None
-            find=True
+            directory = os.path.abspath(directory)
+            curname = ''
+            folder_id = None
+            find = True
             for comp in directory.split('/'):
-                curname+='/'+comp
+                curname += '/' + comp
                 if find:
-                    nextid=self.find_id_in_folder(conn,folder_id,comp,curname,False)
+                    nextid = self.find_id_in_folder(conn,folder_id,comp,curname,False)
                     if nextid is None:
-                        find=False
+                        find = False
                     else:
-                        folder_id=nextid
+                        folder_id = nextid
                 if not find:
-                    folder_id=self.createFolder(conn,folder_id,comp,curname)
+                    folder_id = self.createFolder(conn,folder_id,comp,curname)
             if not find:
                 conn.commit()
 
     def inserttag(self):
-        conn=self.connect()
+        conn = self.connect()
         with conn:
-            query='INSERT INTO TbTag (f_name,f_description) VALUES("%s","%s")' % ('tagname','tagdescription')
+            query = 'INSERT INTO TbTag (f_name,f_description) VALUES("%s","%s")' % ('tagname','tagdescription')
             self.execute(conn,query,True)
+
     def clean(self):
         if not pytags.config.ns_op["p_force"]:
             raise ValueError('must pass --force')
-        conn=self.connect()
+        conn = self.connect()
         with conn:
             self.execute(conn,'SET foreign_key_checks = 0',False)
             self.execute(conn,'DELETE FROM TbFileTag',False)
@@ -242,5 +246,5 @@ class Mgr:
             self.execute(conn,'ALTER TABLE TbFile AUTO_INCREMENT = 1',False)
             self.execute(conn,'ALTER TABLE TbTagRelations AUTO_INCREMENT = 1',False)
             self.execute(conn,'ALTER TABLE TbTag AUTO_INCREMENT = 1',False)
-            self.execute(conn,'SET foreign_key_checks = 1',False)
+            self.execute(conn,'SET foreign_key_checks = 1', False)
             conn.commit()

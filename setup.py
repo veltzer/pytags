@@ -38,6 +38,7 @@ setuptools.setup(
     install_requires=[
         'pytconf',
         'pylogconf',
+        'mysql.connector',
     ],
     extras_require={
     },

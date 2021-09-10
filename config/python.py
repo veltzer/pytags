@@ -12,6 +12,7 @@ setup_requires = [
 run_requires = [
     'pytconf',
     'pylogconf',
+    "mysql.connector",
 ]
 
 test_requires = [

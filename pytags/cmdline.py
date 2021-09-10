@@ -17,62 +17,62 @@ opts = [
 ]
 
 def parse(mgr):
-    debug=False
-    parser=argparse.ArgumentParser(description=pytags.config.ns_product["p_description"])
+    debug = False
+    parser = argparse.ArgumentParser(description = pytags.config.ns_product["p_description"])
     # major ops
     parser.add_argument(
-            '--showconfig',
-            help='show the config (after processing)',
-            action='store_true',
-            default=False,
+        '--showconfig',
+        help = 'show the config (after processing)',
+        action = 'store_true',
+        default = False,
     )
     parser.add_argument(
-            '--testconnect',
-            help='test the connection to the database (no errors is good)',
-            action='store_true',
-            default=False,
+        '--testconnect',
+        help='test the connection to the database (no errors is good)',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--createdb',
-            help='create the database (use --force to remove old)',
-            action='store_true',
-            default=False,
+        '--createdb',
+        help='create the database (use --force to remove old)',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--scan',
-            help='scan a folder recursivly (--dir to override folder)',
-            action='store_true',
-            default=False,
+        '--scan',
+        help='scan a folder recursivly (--dir to override folder)',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--search',
-            help='search for a tag or tags in a folder',
-            action='store_true',
-            default=False,
+        '--search',
+        help='search for a tag or tags in a folder',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--taglist',
-            help='list all tags know to tagger',
-            action='store_true',
-            default=False,
+        '--taglist',
+        help='list all tags know to tagger',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--raiseexception',
-            help='raise an exception (for testing purposes)',
-            action='store_true',
-            default=False,
+        '--raiseexception',
+        help='raise an exception (for testing purposes)',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--insertdir',
-            help='insert a directory into the database (for testing purposes)',
-            action='store_true',
-            default=False,
+        '--insertdir',
+        help='insert a directory into the database (for testing purposes)',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--inserttag',
-            help='insert a tag into the database (for testing purposes)',
-            action='store_true',
-            default=False,
+        '--inserttag',
+        help='insert a tag into the database (for testing purposes)',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
             '--clean',

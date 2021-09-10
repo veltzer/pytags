@@ -2,6 +2,7 @@
 # production requirements
 pytconf
 pylogconf
+mysql.connector
 # dev requirements
 pyclassifiers
 pypitools
