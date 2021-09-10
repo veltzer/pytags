@@ -165,15 +165,16 @@ class Mgr:
                 ) ENGINE=InnoDB
             ''',False)
             conn.commit()
-            #self.execute(conn,'''
+            # self.execute(conn,'''
             #    INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)
-            #    ''' % ('/',os.path.getmtime('/'),1)
-            #,False)
+            #    ''' % ('/',os.path.getmtime('/'),1),False)
+
     def scan(self):
         # first load all the current tags
         self.loadTags()
         # now add the directory if it's not there...
         # directory = pytags.config.ns_mgr.p_dir
+
     def search(self):
         conn = self.connect()
         with conn:
@@ -207,7 +208,7 @@ class Mgr:
         with conn:
             directory = pytags.config.ns_mgr["p_dir"]
             if not os.path.isdir(directory):
-                self.error(directory+' is not a directory')
+                self.error(directory + ' is not a directory')
             # turn the folder into absolute path
             directory = os.path.abspath(directory)
             curname = ''

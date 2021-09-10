@@ -16,15 +16,16 @@ opts = [
     "clean",
 ]
 
+
 def parse(mgr):
     debug = False
-    parser = argparse.ArgumentParser(description = pytags.config.ns_product["p_description"])
+    parser = argparse.ArgumentParser(description=pytags.config.ns_product["p_description"])
     # major ops
     parser.add_argument(
         '--showconfig',
-        help = 'show the config (after processing)',
-        action = 'store_true',
-        default = False,
+        help='show the config (after processing)',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
         '--testconnect',
@@ -75,25 +76,25 @@ def parse(mgr):
         default=False,
     )
     parser.add_argument(
-            '--clean',
-            help='clean the database (must pass --force)',
-            action='store_true',
-            default=False,
+        '--clean',
+        help='clean the database (must pass --force)',
+        action='store_true',
+        default=False,
     )
     # variables overrides
     parser.add_argument(
-            '--force',
-            help='force doing things',
-            action='store_true',
-            default=False,
+        '--force',
+        help='force doing things',
+        action='store_true',
+        default=False,
     )
     parser.add_argument(
-            '--dir',
-            help='directory to scan',
-            action='store',
-            default='.',
+        '--dir',
+        help='directory to scan',
+        action='store',
+        default='.',
     )
-    options=parser.parse_args()
+    options = parser.parse_args()
     if debug:
         print(options)
         sys.exit(1)
@@ -108,11 +109,11 @@ def parse(mgr):
         options.insertdir,
         options.inserttag,
         options.clean,
-    ])!=1:
+    ]) != 1:
         parser.error(f"must specify one of {','.join(opts)}")
     # pass flags
-    pytags.config.ns_op.p_force=options.force
-    pytags.config.ns_mgr.p_dir=options.dir
+    pytags.config.ns_op.p_force = options.force
+    pytags.config.ns_mgr.p_dir = options.dir
     # run the ops...
     if options.showconfig:
         mgr.showconfig()

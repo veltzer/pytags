@@ -2,10 +2,10 @@
 import imp
 import os
 
-home_config='~/.pytags.cfg.py'
-dir_config='pytags.cfg.py'
+home_config = '~/.pytags.cfg.py'
+dir_config = 'pytags.cfg.py'
 imp.load_source('pytags.config', dir_config)
-overridefiles=os.path.expanduser(home_config)
+overridefiles = os.path.expanduser(home_config)
 if os.path.isfile(overridefiles):
     imp.load_source('pytags.config', overridefiles)
 
@@ -21,23 +21,24 @@ def show():
                 if p.startswith('p_'):
                     print('\t',p,ns.__dict__[p])
 
+
 # I added those to quiet warnings down...
 ns_product = {
-        "product": "",
-        "p_description": "",
+    "product": "",
+    "p_description": "",
 }
 ns_db = {
-        "p_host": None,
-        "p_user": None,
-        "p_password": None,
-        "p_db": None,
+    "p_host": None,
+    "p_user": None,
+    "p_password": None,
+    "p_db": None,
 }
 ns_op = {
-        "force": True,
-        "debug": True,
-        "p_sql_debug": True,
+    "force": True,
+    "debug": True,
+    "p_sql_debug": True,
 }
 ns_mgr = {
-        "p_suppress_warnings": False,
-        "p_dir": None,
+    "p_suppress_warnings": False,
+    "p_dir": None,
 }
