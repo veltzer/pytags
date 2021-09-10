@@ -1,13 +1,24 @@
-from __future__ import print_function
 import argparse
 import sys
-import tagger.config
+import pytags.config
 
 # see documentation in http://docs.python.org/library/argparse.html
+opts = [
+    "showconfig",
+    "testconnect",
+    "createdb",
+    "scan",
+    "search",
+    "taglist",
+    "raiseexception",
+    "insertdir",
+    "inserttag",
+    "clean",
+]
 
 def parse(mgr):
     debug=False
-    parser=argparse.ArgumentParser(description=tagger.config.ns_product.p_description)
+    parser=argparse.ArgumentParser(description=pytags.config.ns_product["p_description"])
     # major ops
     parser.add_argument(
             '--showconfig',
@@ -98,10 +109,10 @@ def parse(mgr):
         options.inserttag,
         options.clean,
     ])!=1:
-        parser.error('must specify one of showconfig,testconnect,createdb,scan,search,taglist,raiseexception,insertdir,inserttag,clean')
+        parser.error(f"must specify one of {','.join(opts)}")
     # pass flags
-    tagger.config.ns_op.p_force=options.force
-    tagger.config.ns_mgr.p_dir=options.dir
+    pytags.config.ns_op.p_force=options.force
+    pytags.config.ns_mgr.p_dir=options.dir
     # run the ops...
     if options.showconfig:
         mgr.showconfig()
