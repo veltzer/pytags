@@ -60,5 +60,5 @@ setuptools.setup(
     entry_points={"console_scripts": [
         'tagger=pytags.tagger:main',
     ]},
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )
