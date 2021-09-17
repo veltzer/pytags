@@ -46,16 +46,16 @@ class Mgr:
     def find_id_in_folder(self,conn,folder_id,name,curname,raiseError):
         """ find the id of a file named name in folder with db id id """
         if folder_id is None:
-            query = 'SELECT f_id from TbFile WHERE f_parent IS NULL'
+            query = "SELECT f_id from TbFile WHERE f_parent IS NULL"
         else:
-            query = 'SELECT f_id from TbFile WHERE f_name="%s" AND f_parent=%d' % (name,folder_id)
+            query = f"SELECT f_id from TbFile WHERE f_name=\"{name}\" AND f_parent={folder_id}"
         row = self.get_row(conn,query)
         if row is None:
             if raiseError:
                 if folder_id is None:
-                    msg = 'cannot find root folder'
+                    msg = "cannot find root folder"
                 else:
-                    msg = 'cannot find folder ' + name + ' in ' + curname
+                    msg = f"cannot find folder {name} in {curname}"
                 raise ValueError(msg)
             return None
         return row[0]
@@ -91,7 +91,7 @@ class Mgr:
             while row is not None:
                 # name to id mapping...
                 self.tags[row['f_name']] = row['f_id']
-                Mgr.debug('inserting key %s value %s' % (row['f_name'],row['f_id']))
+                Mgr.debug(f"inserting key {row['f_name']} value {row['f_id']}")
                 row = cr.fetchone()
             cr.close()
 
@@ -109,7 +109,7 @@ class Mgr:
                 conn = self.connect()
                 print('found database - removing it...')
                 with conn:
-                    query = 'DROP DATABASE IF EXISTS %s' % (pytags.config.ns_db["p_db"])
+                    query = f"DROP DATABASE IF EXISTS {pytags.config.ns_db['p_db']}"
                     self.execute(conn,query,True)
             except mysql.connector.Error:
                 print('no previous database detected')
@@ -117,7 +117,7 @@ class Mgr:
         conn = self.connectNodb()
         with conn:
             print('creating the empty database...')
-            query = 'CREATE DATABASE %s' % (pytags.config.ns_db["p_db"])
+            query = f"CREATE DATABASE {pytags.config.ns_db['p_db']}"
             self.execute(conn,query,True)
         # connect to a clean database
         conn = self.connect()
@@ -230,7 +230,9 @@ class Mgr:
     def inserttag(self):
         conn = self.connect()
         with conn:
-            query = 'INSERT INTO TbTag (f_name,f_description) VALUES("%s","%s")' % ('tagname','tagdescription')
+            tagname = "tagname"
+            tagdescription = "tagdescription"
+            query = f"INSERT INTO TbTag (f_name,f_description) VALUES(\"{tagname}\",\"{tagdescription}\")"
             self.execute(conn,query,True)
 
     def clean(self):
