@@ -45,7 +45,6 @@ project_classifiers = [
 ]
 
 project_data_files = []
-# project_data_files.append(templar.utils.hlp_files_under("/usr/bin", "src/*"))
 
 project_copyright_years = ", ".join(
     map(str, range(int(project_year_started), datetime.datetime.now().year + 1)))
