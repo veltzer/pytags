@@ -1,5 +1,6 @@
 import pyclassifiers.values
 import config.general
+import config.helpers
 
 project_github_username = "veltzer"
 project_name = "pytags"
