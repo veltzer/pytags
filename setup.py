@@ -41,7 +41,7 @@ setuptools.setup(
         'mysql.connector',
     ],
     extras_require={
-    },
+    }},
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
