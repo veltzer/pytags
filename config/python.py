@@ -6,7 +6,7 @@ console_scripts = [
     "tagger=pytags.tagger:main",
 ]
 
-run_requires = [
+install_requires = [
     "pytconf",
     "pylogconf",
     "mysql.connector",
