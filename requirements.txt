@@ -1,4 +1,8 @@
 # THIS IS AN AUTO-GENERATED FILE. DO NOT EDIT!
+# production requirements
+pytconf
+pylogconf
+mysql.connector
 # dev requirements
 pyclassifiers
 pypitools
