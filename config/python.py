@@ -10,7 +10,6 @@ dev_requires = [
     "pypitools",
     "pydmt",
     "Sphinx",
-    "pymakehelper",
 ]
 install_requires = [
     "pytconf",
@@ -23,6 +22,9 @@ test_requires = [
     "pytest-cov",
     "pyflakes",
     "flake8",
+]
+make_requires = [
+    "pymakehelper",
 ]
 
 python_requires = ">=3.10"
