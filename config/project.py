@@ -1,4 +1,4 @@
-short_description = "module to help you tag interesting places in your code"
+description_short = "module to help you tag interesting places in your code"
 keywords = [
     "pytags",
     "tag",
