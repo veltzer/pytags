@@ -4,10 +4,7 @@ pytconf
 pylogconf
 mysql.connector
 # dev requirements
-pyclassifiers
 pypitools
-pydmt
-Sphinx
 # test requirements
 pylint
 pytest
