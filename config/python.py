@@ -2,10 +2,13 @@ console_scripts = [
     "tagger=pytags.tagger:main",
 ]
 dev_requires = [
-    "pyclassifiers",
     "pypitools",
+]
+make_requires = [
+    "pyclassifiers",
     "pydmt",
     "Sphinx",
+    "pymakehelper",
 ]
 install_requires = [
     "pytconf",
@@ -19,7 +22,4 @@ test_requires = [
     "pyflakes",
     "flake8",
     "mypy",
-]
-make_requires = [
-    "pymakehelper",
 ]
