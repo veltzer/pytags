@@ -1,13 +1,12 @@
-# pylint: disable=deprecated-module
-import imp
 import os
 
 home_config = '~/.pytags.cfg.py'
 dir_config = 'pytags.cfg.py'
-imp.load_source('pytags.config', dir_config)
+# imp.load_source('pytags.config', dir_config)
 overridefiles = os.path.expanduser(home_config)
 if os.path.isfile(overridefiles):
-    imp.load_source('pytags.config', overridefiles)
+    pass
+    # imp.load_source('pytags.config', overridefiles)
 
 
 def show():
