@@ -18,7 +18,7 @@ def show():
             ns = d.__dict__[ns_name]
             for p in ns.__dict__:
                 if p.startswith('p_'):
-                    print('\t',p,ns.__dict__[p])
+                    print('\t', p, ns.__dict__[p])
 
 
 # I added those to quiet warnings down...
