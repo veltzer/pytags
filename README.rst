@@ -12,6 +12,6 @@ project website: https://veltzer.github.io/pytags
 
 author: Mark Veltzer
 
-version: 0.0.11
+version: 0.0.12
 
 	Mark Veltzer <mark.veltzer@gmail.com>, Copyright © 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
