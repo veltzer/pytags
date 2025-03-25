@@ -1,3 +1,7 @@
+"""
+cmdline.py
+"""
+
 import argparse
 import sys
 import pytags.config

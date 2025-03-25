@@ -1,3 +1,7 @@
+"""
+mgr.py
+"""
+
 import os
 
 import mysql.connector

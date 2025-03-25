@@ -1,3 +1,7 @@
+"""
+tagger.py
+"""
+
 import pytags.cmdline
 import pytags.mgr
 
