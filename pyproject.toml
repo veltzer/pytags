@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pytags"
+version = "0.0.12"
+requires-python = ">=3.12"
+authors = [
+	{ name = "Mark Veltzer", email = "mark.veltzer@gmail.com" }
+]
+maintainers = [
+	{ name = "Mark Veltzer", email = "mark.veltzer@gmail.com" }
+]
+description = "module to help you tag interesting places in your code"
+readme = "README.md"
+license = "MIT"
+keywords=[
+    "pytags",
+    "tag",
+    "code",
+    "command",
+    "line",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "pytconf",
+    "pylogconf",
+    "mysql.connector",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/veltzer/pytags"
+"Bug Tracker" = "https://github.com/veltzer/pytags/issues"
+"Documentation" = "https://veltzer.github.io/pytags"
+"Download" = "https://pypi.org/project/pytags/"
+"Repository" = "https://github.com/veltzer/pytags"
+
+[project.scripts]
+pytags = "pytags.main:main"
+
+[tool.ruff]
+line-length = 130
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

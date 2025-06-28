@@ -1,8 +1,8 @@
 """ python deps for this project """
 
-console_scripts: list[str] = [
-    "tagger=pytags.tagger:main",
-]
+scripts: dict[str,str] = {
+    "pytags": "pytags.main:main",
+}
 
 config_requires: list[str] = [
     "pyclassifiers",
@@ -21,5 +21,6 @@ test_requires: list[str] = [
     "pytest",
     "pytest-cov",
     "mypy",
+    "ruff",
 ]
 requires = config_requires + install_requires + build_requires + test_requires
