@@ -1,12 +1,12 @@
 # THIS IS AN AUTO-GENERATED FILE. DO NOT EDIT!
-pyclassifiers
-pytconf
-pylogconf
+mypy
 mysql.connector
+pyclassifiers
 pydmt
-pymakehelper
 pylint
+pylogconf
+pymakehelper
+pytconf
 pytest
 pytest-cov
-mypy
 ruff
