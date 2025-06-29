@@ -1,7 +1,9 @@
 # THIS IS AN AUTO-GENERATED FILE. DO NOT EDIT!
+hatch
 mypy
 mysql.connector
 pyclassifiers
+pycmdtools
 pydmt
 pylint
 pylogconf
