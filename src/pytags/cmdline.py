@@ -4,6 +4,7 @@ cmdline.py
 
 import argparse
 import sys
+
 import pytags.config
 
 # see documentation in http://docs.python.org/library/argparse.html
