@@ -39,6 +39,14 @@ dependencies = [
     "mysql.connector",
 ]
 
+[dependency-groups]
+dev = [
+    "mypy",
+    "pylint",
+    "pytest",
+    "ruff",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/veltzer/pytags"
 "Bug Tracker" = "https://github.com/veltzer/pytags/issues"
