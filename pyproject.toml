@@ -56,7 +56,7 @@ dev = [
 "Repository" = "https://github.com/veltzer/pytags"
 
 [project.scripts]
-pytags = "pytags.main:main"
+pytags = "pytags.tagger:main"
 
 [tool.ruff]
 line-length = 130
