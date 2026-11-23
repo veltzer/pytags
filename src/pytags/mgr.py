@@ -47,7 +47,6 @@ class Mgr:
     def error(self, msg):
         raise ValueError(msg)
 
-    # pylint: disable=too-many-positional-arguments
     def find_id_in_folder(self, conn, folder_id, name, curname, raise_error):
         """ find the id of a file named name in folder with db id id """
         if folder_id is None:
