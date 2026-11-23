@@ -9,7 +9,4 @@ import os
 
 
 def dir_list(arg):
-    p_dir_list = []
-    for x in os.walk(arg):
-        p_dir_list.append(x[0])
-    return p_dir_list
+    return [x[0] for x in os.walk(arg)]

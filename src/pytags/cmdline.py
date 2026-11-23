@@ -118,8 +118,8 @@ def parse(mgr):
         all_opts = ",".join(opts)
         parser.error(f"must specify one of {all_opts}")
     # pass flags
-    pytags.config.ns_op.p_force = options.force
-    pytags.config.ns_mgr.p_dir = options.dir
+    pytags.config.ns_op["p_force"] = options.force
+    pytags.config.ns_mgr["p_dir"] = options.dir
     # run the ops...
     if options.showconfig:
         mgr.showconfig()

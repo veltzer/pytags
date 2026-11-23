@@ -18,11 +18,11 @@ class Mgr:
     def connect(self):
         return mysql.connector.Connect({})
 
-    def connectNodb(self):
+    def connect_nodb(self):
         return mysql.connector.Connect({})
 
     def get_row(self, connection, query):
-        cr = Mgr.getCursor(connection)
+        cr = Mgr.get_cursor(connection)
         cr.execute(query)
         row = cr.fetchone()
         cr.close()
@@ -37,7 +37,7 @@ class Mgr:
         """ Run the given query, commit changes """
         if pytags.config.ns_op["p_sql_debug"]:
             print(f"doing {stmt}")
-        cr = Mgr.getCursor(connection)
+        cr = Mgr.get_cursor(connection)
         num_affected_rows = cr.execute(stmt)
         cr.close()
         if commit:
@@ -48,7 +48,7 @@ class Mgr:
         raise ValueError(msg)
 
     # pylint: disable=too-many-positional-arguments
-    def find_id_in_folder(self, conn, folder_id, name, curname, raiseError):
+    def find_id_in_folder(self, conn, folder_id, name, curname, raise_error):
         """ find the id of a file named name in folder with db id id """
         if folder_id is None:
             query = "SELECT f_id from TbFile WHERE f_parent IS NULL"
@@ -56,16 +56,13 @@ class Mgr:
             query = f"SELECT f_id from TbFile WHERE f_name=\"{name}\" AND f_parent={folder_id}"
         row = self.get_row(conn, query)
         if row is None:
-            if raiseError:
-                if folder_id is None:
-                    msg = "cannot find root folder"
-                else:
-                    msg = f"cannot find folder {name} in {curname}"
+            if raise_error:
+                msg = "cannot find root folder" if folder_id is None else f"cannot find folder {name} in {curname}"
                 raise ValueError(msg)
             return None
         return row[0]
 
-    def createFolder(self, conn, folder_id, name, curname):
+    def create_folder(self, conn, folder_id, name, curname):
         """ create a folder """
         if folder_id is None:
             query = Q_INSERT % (name, os.path.getmtime(curname), "NULL")
@@ -82,15 +79,15 @@ class Mgr:
             pass
 
     @staticmethod
-    def getCursor(conn):
+    def get_cursor(conn):
         return conn.cursor()
 
-    def loadTags(self):
+    def load_tags(self):
         # the dictionary for the tags
         self.tags = {}
         conn = self.connect()
         with conn:
-            cr = Mgr.getCursor(conn)
+            cr = Mgr.get_cursor(conn)
             cr.execute("SELECT f_id,f_name,f_description from TbTag")
             row = cr.fetchone()
             while row is not None:
@@ -102,7 +99,7 @@ class Mgr:
                 row = cr.fetchone()
             cr.close()
 
-    def dropTables(self, conn):
+    def drop_tables(self, conn):
         self.execute(conn, "DROP DATABASE IF EXISTS TbFileTag", False)
         self.execute(conn, "DROP TABLE IF EXISTS TbFileTag", False)
         self.execute(conn, "DROP TABLE IF EXISTS TbFile", False)
@@ -122,7 +119,7 @@ class Mgr:
             except mysql.connector.Error:
                 print("no previous database detected")
         # create the database
-        conn = self.connectNodb()
+        conn = self.connect_nodb()
         with conn:
             print("creating the empty database...")
             p_db = pytags.config.ns_db["p_db"]
@@ -180,7 +177,7 @@ class Mgr:
 
     def scan(self):
         # first load all the current tags
-        self.loadTags()
+        self.load_tags()
         # now add the directory if its not there...
         # directory = pytags.config.ns_mgr.p_dir
 
@@ -188,8 +185,10 @@ class Mgr:
         conn = self.connect()
         with conn:
             directory = pytags.config.ns_mgr["p_dir"]
+            if directory is None:
+                self.error("no directory was given")
             if not os.path.isdir(directory):
-                self.error(directory + " is not a directory")
+                self.error(f"{directory} is not a directory")
             # turn the folder into absolute path
             directory = os.path.abspath(directory)
             curname = ""
@@ -201,7 +200,7 @@ class Mgr:
     def taglist(self):
         conn = self.connect()
         with conn:
-            cr = Mgr.getCursor(conn)
+            cr = Mgr.get_cursor(conn)
             cr.execute("SELECT f_name from TbTag")
             row = cr.fetchone()
             while row is not None:
@@ -216,8 +215,10 @@ class Mgr:
         conn = self.connect()
         with conn:
             directory = pytags.config.ns_mgr["p_dir"]
+            if directory is None:
+                self.error("no directory was given")
             if not os.path.isdir(directory):
-                self.error(directory + " is not a directory")
+                self.error(f"{directory} is not a directory")
             # turn the folder into absolute path
             directory = os.path.abspath(directory)
             curname = ""
@@ -232,7 +233,7 @@ class Mgr:
                     else:
                         folder_id = nextid
                 if not find:
-                    folder_id = self.createFolder(conn, folder_id, comp, curname)
+                    folder_id = self.create_folder(conn, folder_id, comp, curname)
             if not find:
                 conn.commit()
 
