@@ -36,7 +36,7 @@ classifiers = [
 dependencies = [
     "pytconf",
     "pylogconf",
-    "mysql.connector",
+    "mysql-connector-python",
 ]
 
 [dependency-groups]

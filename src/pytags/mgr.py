@@ -2,6 +2,7 @@
 mgr.py
 """
 
+import contextlib
 import os
 
 import mysql.connector
@@ -74,7 +75,7 @@ class Mgr:
         pytags.config.show()
 
     def testconnect(self):
-        with self.connect():
+        with contextlib.closing(self.connect()):
             pass
 
     @staticmethod
@@ -85,7 +86,7 @@ class Mgr:
         # the dictionary for the tags
         self.tags = {}
         conn = self.connect()
-        with conn:
+        with contextlib.closing(conn):
             cr = Mgr.get_cursor(conn)
             cr.execute("SELECT f_id,f_name,f_description from TbTag")
             row = cr.fetchone()
@@ -111,7 +112,7 @@ class Mgr:
             try:
                 conn = self.connect()
                 print("found database - removing it...")
-                with conn:
+                with contextlib.closing(conn):
                     p_db = pytags.config.ns_db["p_db"]
                     query = f"DROP DATABASE IF EXISTS {p_db}"
                     self.execute(conn, query, True)
@@ -119,14 +120,14 @@ class Mgr:
                 print("no previous database detected")
         # create the database
         conn = self.connect_nodb()
-        with conn:
+        with contextlib.closing(conn):
             print("creating the empty database...")
             p_db = pytags.config.ns_db["p_db"]
             query = f"CREATE DATABASE {p_db}"
             self.execute(conn, query, True)
         # connect to a clean database
         conn = self.connect()
-        with conn:
+        with contextlib.closing(conn):
             print("creating the tables...")
             self.execute(conn, """
                 CREATE TABLE TbTag (
@@ -182,7 +183,7 @@ class Mgr:
 
     def search(self):
         conn = self.connect()
-        with conn:
+        with contextlib.closing(conn):
             directory = pytags.config.ns_mgr["p_dir"]
             if directory is None:
                 self.error("no directory was given")
@@ -198,7 +199,7 @@ class Mgr:
 
     def taglist(self):
         conn = self.connect()
-        with conn:
+        with contextlib.closing(conn):
             cr = Mgr.get_cursor(conn)
             cr.execute("SELECT f_name from TbTag")
             row = cr.fetchone()
@@ -212,7 +213,7 @@ class Mgr:
 
     def insertdir(self):
         conn = self.connect()
-        with conn:
+        with contextlib.closing(conn):
             directory = pytags.config.ns_mgr["p_dir"]
             if directory is None:
                 self.error("no directory was given")
@@ -238,7 +239,7 @@ class Mgr:
 
     def inserttag(self):
         conn = self.connect()
-        with conn:
+        with contextlib.closing(conn):
             tagname = "tagname"
             tagdescription = "tagdescription"
             query = f"INSERT INTO TbTag (f_name,f_description) VALUES(\"{tagname}\",\"{tagdescription}\")"
@@ -248,7 +249,7 @@ class Mgr:
         if not pytags.config.ns_op["p_force"]:
             raise ValueError("must pass --force")
         conn = self.connect()
-        with conn:
+        with contextlib.closing(conn):
             self.execute(conn, "SET foreign_key_checks = 0", False)
             self.execute(conn, "DELETE FROM TbFileTag", False)
             self.execute(conn, "DELETE FROM TbFile", False)
