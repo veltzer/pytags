@@ -12,7 +12,7 @@ if os.path.isfile(overridefiles):
     pass
 
 
-def show():
+def show() -> None:
     print("reading config from", dir_config, ",", home_config)
     d = locals()
     for ns_name in d:

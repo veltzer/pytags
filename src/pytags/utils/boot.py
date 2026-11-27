@@ -8,5 +8,5 @@ It intentionaly will duplicate code in other utils since it is a boot strapper.
 import os
 
 
-def dir_list(arg):
+def dir_list(arg: str) -> list[str]:
     return [x[0] for x in os.walk(arg)]

@@ -4,8 +4,12 @@ cmdline.py
 
 import argparse
 import sys
+from typing import TYPE_CHECKING
 
 import pytags.config
+
+if TYPE_CHECKING:
+    from pytags.mgr import Mgr
 
 # see documentation in http://docs.python.org/library/argparse.html
 opts = [
@@ -22,7 +26,7 @@ opts = [
 ]
 
 
-def parse(mgr):
+def parse(mgr: Mgr) -> None:
     debug = False
     parser = argparse.ArgumentParser(description=pytags.config.ns_product["p_description"])
     # major ops

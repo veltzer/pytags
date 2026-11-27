@@ -6,7 +6,7 @@ import pytags.cmdline
 import pytags.mgr
 
 
-def main():
+def main() -> None:
     mgr = pytags.mgr.Mgr()
     pytags.cmdline.parse(mgr)
 
