@@ -68,7 +68,7 @@ class Mgr:
             query = Q_INSERT % (name, os.path.getmtime(curname), "NULL")
         else:
             query = Q_INSERT % (name, os.path.getmtime(curname), folder_id)
-        self.execute(conn, query, False)
+        self.execute(conn, query, commit=False)
         return conn.insert_id()
 
     def showconfig(self):
@@ -100,11 +100,11 @@ class Mgr:
             cr.close()
 
     def drop_tables(self, conn):
-        self.execute(conn, "DROP DATABASE IF EXISTS TbFileTag", False)
-        self.execute(conn, "DROP TABLE IF EXISTS TbFileTag", False)
-        self.execute(conn, "DROP TABLE IF EXISTS TbFile", False)
-        self.execute(conn, "DROP TABLE IF EXISTS TbTagRelations", False)
-        self.execute(conn, "DROP TABLE IF EXISTS TbTag", False)
+        self.execute(conn, "DROP DATABASE IF EXISTS TbFileTag", commit=False)
+        self.execute(conn, "DROP TABLE IF EXISTS TbFileTag", commit=False)
+        self.execute(conn, "DROP TABLE IF EXISTS TbFile", commit=False)
+        self.execute(conn, "DROP TABLE IF EXISTS TbTagRelations", commit=False)
+        self.execute(conn, "DROP TABLE IF EXISTS TbTag", commit=False)
 
     def createdb(self):
         # remove the old database if force is in place
@@ -115,7 +115,7 @@ class Mgr:
                 with contextlib.closing(conn):
                     p_db = pytags.config.ns_db["p_db"]
                     query = f"DROP DATABASE IF EXISTS {p_db}"
-                    self.execute(conn, query, True)
+                    self.execute(conn, query, commit=True)
             except mysql.connector.Error:
                 print("no previous database detected")
         # create the database
@@ -124,7 +124,7 @@ class Mgr:
             print("creating the empty database...")
             p_db = pytags.config.ns_db["p_db"]
             query = f"CREATE DATABASE {p_db}"
-            self.execute(conn, query, True)
+            self.execute(conn, query, commit=True)
         # connect to a clean database
         conn = self.connect()
         with contextlib.closing(conn):
@@ -137,7 +137,7 @@ class Mgr:
                     PRIMARY KEY(f_id),
                     UNIQUE KEY f_name (f_name)
                 ) ENGINE=InnoDB
-            """, False)
+            """, commit=False)
             self.execute(conn, """
                 CREATE TABLE TbTagRelations (
                     f_parent_tag INT NOT NULL,
@@ -147,7 +147,7 @@ class Mgr:
                     CONSTRAINT FOREIGN KEY(f_parent_tag) REFERENCES TbTag(f_id),
                     CONSTRAINT FOREIGN KEY(f_child_tag) REFERENCES TbTag(f_id)
                 ) ENGINE=InnoDB
-            """, False)
+            """, commit=False)
             self.execute(conn, """
                 CREATE TABLE TbFile (
                     f_id INT NOT NULL AUTO_INCREMENT,
@@ -159,7 +159,7 @@ class Mgr:
                     KEY f_parent (f_parent),
                     CONSTRAINT FOREIGN KEY(f_parent) REFERENCES TbFile(f_id)
                 ) ENGINE=InnoDB
-            """, False)
+            """, commit=False)
             self.execute(conn, """
                 CREATE TABLE TbFileTag (
                     f_file INT NOT NULL,
@@ -169,7 +169,7 @@ class Mgr:
                 CONSTRAINT FOREIGN KEY(f_file) REFERENCES TbFile(f_id),
                 CONSTRAINT FOREIGN KEY(f_tag) REFERENCES TbTag(f_id)
                 ) ENGINE=InnoDB
-            """, False)
+            """, commit=False)
             conn.commit()
             # self.execute(conn, """
             #    INSERT INTO TbFile (f_name,f_mtime,f_parent) VALUES("%s",FROM_UNIXTIME(%s),%s)
@@ -195,7 +195,7 @@ class Mgr:
             folder_id = None
             for comp in directory.split("/"):
                 curname += "/" + comp
-                folder_id = self.find_id_in_folder(conn, folder_id, comp, curname, True)
+                folder_id = self.find_id_in_folder(conn, folder_id, comp, curname, raise_error=True)
 
     def taglist(self):
         conn = self.connect()
@@ -227,7 +227,7 @@ class Mgr:
             for comp in directory.split("/"):
                 curname += "/" + comp
                 if find:
-                    nextid = self.find_id_in_folder(conn, folder_id, comp, curname, False)
+                    nextid = self.find_id_in_folder(conn, folder_id, comp, curname, raise_error=False)
                     if nextid is None:
                         find = False
                     else:
@@ -243,21 +243,21 @@ class Mgr:
             tagname = "tagname"
             tagdescription = "tagdescription"
             query = f"INSERT INTO TbTag (f_name,f_description) VALUES(\"{tagname}\",\"{tagdescription}\")"
-            self.execute(conn, query, True)
+            self.execute(conn, query, commit=True)
 
     def clean(self):
         if not pytags.config.ns_op["p_force"]:
             raise ValueError("must pass --force")
         conn = self.connect()
         with contextlib.closing(conn):
-            self.execute(conn, "SET foreign_key_checks = 0", False)
-            self.execute(conn, "DELETE FROM TbFileTag", False)
-            self.execute(conn, "DELETE FROM TbFile", False)
-            self.execute(conn, "DELETE FROM TbTagRelations", False)
-            self.execute(conn, "DELETE FROM TbTag", False)
-            self.execute(conn, "ALTER TABLE TbFileTag AUTO_INCREMENT = 1", False)
-            self.execute(conn, "ALTER TABLE TbFile AUTO_INCREMENT = 1", False)
-            self.execute(conn, "ALTER TABLE TbTagRelations AUTO_INCREMENT = 1", False)
-            self.execute(conn, "ALTER TABLE TbTag AUTO_INCREMENT = 1", False)
-            self.execute(conn, "SET foreign_key_checks = 1", False)
+            self.execute(conn, "SET foreign_key_checks = 0", commit=False)
+            self.execute(conn, "DELETE FROM TbFileTag", commit=False)
+            self.execute(conn, "DELETE FROM TbFile", commit=False)
+            self.execute(conn, "DELETE FROM TbTagRelations", commit=False)
+            self.execute(conn, "DELETE FROM TbTag", commit=False)
+            self.execute(conn, "ALTER TABLE TbFileTag AUTO_INCREMENT = 1", commit=False)
+            self.execute(conn, "ALTER TABLE TbFile AUTO_INCREMENT = 1", commit=False)
+            self.execute(conn, "ALTER TABLE TbTagRelations AUTO_INCREMENT = 1", commit=False)
+            self.execute(conn, "ALTER TABLE TbTag AUTO_INCREMENT = 1", commit=False)
+            self.execute(conn, "SET foreign_key_checks = 1", commit=False)
             conn.commit()
