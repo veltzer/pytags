@@ -178,8 +178,6 @@ class Mgr:
     def scan(self):
         # first load all the current tags
         self.load_tags()
-        # now add the directory if its not there...
-        # directory = pytags.config.ns_mgr.p_dir
 
     def search(self):
         conn = self.connect()
