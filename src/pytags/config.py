@@ -29,7 +29,7 @@ ns_product = {
     "product": "",
     "p_description": "",
 }
-ns_db = {
+ns_db: dict[str, str | None] = {
     "p_host": None,
     "p_user": None,
     "p_password": None,
